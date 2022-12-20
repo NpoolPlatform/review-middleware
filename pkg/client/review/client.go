@@ -86,6 +86,32 @@ func GetObjectReview(ctx context.Context, appID, domain, objectID string, object
 	return info.(*mgrpb.Review), nil
 }
 
+func GetObjectReviews(
+	ctx context.Context,
+	appID, domain string,
+	objectIDs []string,
+	objectType mgrpb.ReviewObjectType,
+) (
+	[]*mgrpb.Review, error,
+) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetObjectReviews(ctx, &npool.GetObjectReviewsRequest{
+			AppID:      appID,
+			Domain:     domain,
+			ObjectIDs:  objectIDs,
+			ObjectType: objectType,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("fail get review: %v", err)
+		}
+		return resp.GetInfos(), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("fail get review: %v", err)
+	}
+	return infos.([]*mgrpb.Review), nil
+}
+
 func GetReviews(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.Review, uint32, error) {
 	var total uint32
 
