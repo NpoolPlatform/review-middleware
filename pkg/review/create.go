@@ -28,25 +28,10 @@ func CreateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, erro
 				entreview.Domain(in.GetDomain()),
 				entreview.ObjectID(uuid.MustParse(in.GetObjectID())),
 				entreview.ObjectType(in.GetObjectType().String()),
-				entreview.State(mgrpb.ReviewState_Wait.String()),
-			).
-			Exist(_ctx)
-		if err != nil {
-			return err
-		}
-		if exist {
-			return fmt.Errorf("object review exist")
-		}
-
-		exist, err = tx.
-			Review.
-			Query().
-			Where(
-				entreview.AppID(uuid.MustParse(in.GetAppID())),
-				entreview.Domain(in.GetDomain()),
-				entreview.ObjectID(uuid.MustParse(in.GetObjectID())),
-				entreview.ObjectType(in.GetObjectType().String()),
-				entreview.State(mgrpb.ReviewState_Approved.String()),
+				entreview.Or(
+					entreview.State(mgrpb.ReviewState_Wait.String()),
+					entreview.State(mgrpb.ReviewState_Approved.String()),
+				),
 			).
 			Exist(_ctx)
 		if err != nil {
