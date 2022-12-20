@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: review-middleware-config
+  namespace: kube-system
+data:
+  service-conf: |
+    config:
+      hostname: "review-middleware.npool.top"
+      http_port: 50660
+      grpc_port: 50661
+      healthz_port: 50662
+      prometheus_port: 50663
+      appid: "89089012783789789719823798127398"
+      serviceid: "650c37b6-804a-11ed-975f-1e0b0807e20c"
+      logdir: "./"
+      apolloAccessKey: "0147fb70b815403790e8634b899fac07"

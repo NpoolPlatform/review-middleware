@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-middleware
+  namespace: kube-system
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: review-middleware
+  template:
+    metadata:
+      labels:
+        app: review-middleware
+    spec:
+      containers:
+        - name: review-middleware
+          image: uhub.service.ucloud.cn/entropypool/review-middleware:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/ReviewMiddleware
+          env:
+            - name: ENV_ENVIRONMENT_TARGET
+              valueFrom:
+                configMapKeyRef:
+                  name: system-environment
+                  key: environment.target
+            - name: ENV_CONSUL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: system-environment
+                  key: environment.consul_host
+            - name: ENV_CONSUL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: system-environment
+                  key: environment.consul_port
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      volumes:
+        - name: service-config
+          configMap:
+            name: review-middleware-config
+            items:
+              - key: service-conf
+                path: ReviewMiddleware.viper.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-middleware
+  namespace: kube-system
+spec:
+  ports:
+    - name: http
+      port: 50660
+      targetPort: 50660
+    - name: grpc
+      port: 50661
+      targetPort: 50661
+    - name: healthz
+      port: 50662
+      targetPort: 50662
+    - name: prometheus
+      port: 50663
+      targetPort: 50663
+  selector:
+    app: review-middleware
