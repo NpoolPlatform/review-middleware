@@ -86,3 +86,32 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 		Total: total,
 	}, nil
 }
+
+func (s *Server) GetObjectReviews(ctx context.Context, in *npool.GetObjectReviewsRequest) (*npool.GetObjectReviewsResponse, error) {
+	if _, err := uuid.Parse(in.GetAppID()); err != nil {
+		return &npool.GetObjectReviewsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	if in.GetDomain() == "" {
+		return &npool.GetObjectReviewsResponse{}, status.Error(codes.Internal, "Domain is invalid")
+	}
+	for _, id := range in.GetObjectIDs() {
+		if _, err := uuid.Parse(id); err != nil {
+			return &npool.GetObjectReviewsResponse{}, status.Error(codes.Internal, err.Error())
+		}
+	}
+	switch in.GetObjectType() {
+	case mgrpb.ReviewObjectType_ObjectKyc:
+	case mgrpb.ReviewObjectType_ObjectWithdrawal:
+	default:
+		return &npool.GetObjectReviewsResponse{}, status.Error(codes.Internal, "ObjectType is invalid")
+	}
+
+	infos, err := review1.GetObjectReviews(ctx, in.GetAppID(), in.GetDomain(), in.GetObjectIDs(), in.GetObjectType())
+	if err != nil {
+		return &npool.GetObjectReviewsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetObjectReviewsResponse{
+		Infos: infos,
+	}, nil
+}
