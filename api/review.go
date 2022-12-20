@@ -22,7 +22,7 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 		return &npool.CreateReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := mgrcli.CreateReview(ctx, in.GetInfo())
+	info, err := review1.CreateReview(ctx, in.GetInfo())
 	if err != nil {
 		return &npool.CreateReviewResponse{}, status.Error(codes.Internal, err.Error())
 	}
