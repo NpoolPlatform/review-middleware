@@ -2,17 +2,66 @@ package review
 
 import (
 	"context"
+	"fmt"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/review/mgr/v2"
-	mgrcli "github.com/NpoolPlatform/review-manager/pkg/client/review"
+
+	"github.com/NpoolPlatform/review-manager/pkg/db"
+	"github.com/NpoolPlatform/review-manager/pkg/db/ent"
+	entreview "github.com/NpoolPlatform/review-manager/pkg/db/ent/review"
+
+	converter "github.com/NpoolPlatform/review-manager/pkg/converter/review"
+	crud "github.com/NpoolPlatform/review-manager/pkg/crud/review"
+
+	"github.com/google/uuid"
 )
 
 func CreateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, error) {
-	// TODO: if we have one wait or approved for object, do not create again
+	var info *ent.Review
 
-	info, err := mgrcli.CreateReview(ctx, in)
+	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		exist, err := tx.
+			Review.
+			Query().
+			Where(
+				entreview.AppID(uuid.MustParse(in.GetAppID())),
+				entreview.Domain(in.GetDomain()),
+				entreview.ObjectID(uuid.MustParse(in.GetObjectID())),
+				entreview.ObjectType(in.GetObjectType().String()),
+				entreview.State(mgrpb.ReviewState_Wait.String()),
+			).
+			Exist(_ctx)
+		if err != nil {
+			return err
+		}
+		if exist {
+			return fmt.Errorf("object review exist")
+		}
+
+		exist, err = tx.
+			Review.
+			Query().
+			Where(
+				entreview.AppID(uuid.MustParse(in.GetAppID())),
+				entreview.Domain(in.GetDomain()),
+				entreview.ObjectID(uuid.MustParse(in.GetObjectID())),
+				entreview.ObjectType(in.GetObjectType().String()),
+				entreview.State(mgrpb.ReviewState_Approved.String()),
+			).
+			Exist(_ctx)
+		if err != nil {
+			return err
+		}
+		if exist {
+			return fmt.Errorf("object review exist")
+		}
+
+		info, err = crud.CreateSet(tx.Review.Create(), in).Save(_ctx)
+		return err
+	})
 	if err != nil {
-		return &npool.CreateReviewResponse{}, status.Error(codes.Internal, err.Error())
+		return nil, err
 	}
-	return info, nil
+
+	return converter.Ent2Grpc(info), nil
 }
