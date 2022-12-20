@@ -67,10 +67,13 @@ func UpdateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, erro
 	return info.(*mgrpb.Review), nil
 }
 
-func GetReviewOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Review, error) {
+func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType mgrpb.ReviewObjectType) (*mgrpb.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetReviewOnly(ctx, &npool.GetReviewOnlyRequest{
-			Conds: conds,
+		resp, err := cli.GetObjectReview(ctx, &npool.GetObjectReviewRequest{
+			AppID:      appID,
+			Domain:     domain,
+			ObjectID:   objectID,
+			ObjectType: objectType,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("fail get review: %v", err)
