@@ -15,9 +15,8 @@ import (
 
 func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType mgrpb.ReviewObjectType) (*mgrpb.Review, error) {
 	var info *ent.Review
-	var err error
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		infos, err := cli.
 			Review.
 			Query().
