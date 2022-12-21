@@ -18,7 +18,7 @@ func GetObjectReview(ctx context.Context, appID, domain, objectID string, object
 	var err error
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.
+		infos, err := cli.
 			Review.
 			Query().
 			Where(
@@ -29,8 +29,16 @@ func GetObjectReview(ctx context.Context, appID, domain, objectID string, object
 			).
 			Order(ent.Desc(entreview.FieldUpdatedAt)).
 			Limit(1).
-			Only(_ctx)
-		return err
+			All(_ctx)
+		if err != nil {
+			return err
+		}
+
+		if len(infos) > 0 {
+			info = infos[0]
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -51,7 +59,7 @@ func GetObjectReviews(
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		for _, id := range objectIDs {
-			info, err := cli.
+			_infos, err := cli.
 				Review.
 				Query().
 				Where(
@@ -62,11 +70,16 @@ func GetObjectReviews(
 				).
 				Order(ent.Desc(entreview.FieldUpdatedAt)).
 				Limit(1).
-				Only(_ctx)
+				All(_ctx)
 			if err != nil {
 				return err
 			}
-			infos = append(infos, converter.Ent2Grpc(info))
+
+			if len(_infos) == 0 {
+				continue
+			}
+
+			infos = append(infos, converter.Ent2Grpc(_infos[0]))
 		}
 		return nil
 	})
