@@ -53,8 +53,8 @@ github.com/NpoolPlatform/go-service-framework v0.0.0-20230420053733-2defc8ec8fa0
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230420053733-2defc8ec8fa0/go.mod h1:Kh7DMkWnYOMHxEKq7QfJqbxm1HaUPkhTNN74lfHQxyE=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5 h1:JF3d0OshTe/tHBKflk2x71N83ZgwxNF+EjApSa6qm1M=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
-github.com/NpoolPlatform/message v0.0.0-20230423090145-140f69f54cf5 h1:HDDcRJKVimGjen4Jkz5lhhQtNWk91EK4jhMmwR4dYZQ=
-github.com/NpoolPlatform/message v0.0.0-20230423090145-140f69f54cf5/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
+github.com/NpoolPlatform/message v0.0.0-20230513100359-465cbc33723b h1:IVCloN5x/w2aHu0xONmhShc3UNzCK+/ffk0mJ4S3/yc=
+github.com/NpoolPlatform/message v0.0.0-20230513100359-465cbc33723b/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
 github.com/NpoolPlatform/review-manager v0.0.0-20230423090856-96b4603bdb36 h1:ZpDI7iX8X7DhtFs3Hh4Iw4uhrBdArTKBBljvu5D0Pcc=
 github.com/NpoolPlatform/review-manager v0.0.0-20230423090856-96b4603bdb36/go.mod h1:hdimYx65vD+eExL7tR9uQdOxXYQd386bpx+/X5HJwe8=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=

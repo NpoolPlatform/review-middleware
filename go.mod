@@ -6,7 +6,7 @@ require (
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230420053733-2defc8ec8fa0
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5
-	github.com/NpoolPlatform/message v0.0.0-20230423090145-140f69f54cf5
+	github.com/NpoolPlatform/message v0.0.0-20230513100359-465cbc33723b
 	github.com/NpoolPlatform/review-manager v0.0.0-20230423090856-96b4603bdb36
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
