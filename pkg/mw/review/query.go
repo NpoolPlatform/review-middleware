@@ -10,20 +10,19 @@ import (
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 	entreview "github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
-	converter "github.com/NpoolPlatform/review-middleware/pkg/mw/converter/review"
 
 	"github.com/google/uuid"
 )
 
 type queryHandler struct {
 	*Handler
-	stm       *ent.ReviewSelect
-	infos     []*npool.Review
-	total     uint32
-	ObjectIDs []uuid.UUID
+	stm   *ent.ReviewSelect
+	infos []*npool.Review
+	total uint32
+	IDs   []uuid.UUID
 }
 
-func (h *queryHandler) selectObjectReviews(stm *ent.ReviewQuery) {
+func (h *queryHandler) selectReviews(stm *ent.ReviewQuery) {
 	h.stm = stm.Select(
 		entreview.FieldID,
 		entreview.FieldAppID,
@@ -38,24 +37,17 @@ func (h *queryHandler) selectObjectReviews(stm *ent.ReviewQuery) {
 	)
 }
 
-func (h *queryHandler) queryObjectReview(cli *ent.Client) error {
+func (h *queryHandler) queryReview(cli *ent.Client) error {
 	if h.ID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	h.selectObjectReviews(
+	h.selectReviews(
 		cli.
 			Review.
 			Query().
 			Where(
-				entreview.AppID(*h.AppID),
-				entreview.Domain(*h.Domain),
-				entreview.ObjectID(*h.ObjectID),
-				entreview.ObjectType(h.ObjectType.String()),
-			).
-			Order(
-				ent.Desc(entreview.FieldUpdatedAt),
-			).
-			Limit(1),
+				entreview.ID(*h.ID),
+			),
 	)
 	return nil
 }
@@ -72,13 +64,13 @@ func (h *queryHandler) formalize() {
 	}
 }
 
-func (h *Handler) GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType mgrpb.ReviewObjectType) (info *npool.Review, err error) {
+func (h *Handler) GetReview(ctx context.Context) (info *npool.Review, err error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryObjectReview(cli); err != nil {
+		if err := handler.queryReview(cli); err != nil {
 			return err
 		}
 		if err := handler.scan(_ctx); err != nil {
@@ -100,34 +92,12 @@ func (h *Handler) GetObjectReview(ctx context.Context, appID, domain, objectID s
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetObjectReviews(ctx context.Context) ([]*mgrpb.Review, error) {
+func (h *Handler) GetReviews(ctx context.Context) ([]*mgrpb.Review, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		// for _, objectID := range handler.ObjectIDs {
-		// 	h.ObjectID = &objectID
-		// 	if err := handler.queryObjectReview(cli); err != nil {
-		// 		return err
-		// 	}
-		// }
-		infos, err := cli.
-			Review.
-			Query().
-			Where(
-				entreview.AppID(*h.AppID),
-				entreview.Domain(*h.Domain),
-				entreview.ObjectIDIn(handler.ObjectIDs...),
-				entreview.ObjectType(h.ObjectType.String()),
-			).
-			Order(ent.Desc(entreview.FieldUpdatedAt)).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		handler.infos = converter.Ent2GrpcMany(infos)
 		return nil
 	})
 	if err != nil {
