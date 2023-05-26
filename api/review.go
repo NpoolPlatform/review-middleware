@@ -3,11 +3,10 @@ package api
 import (
 	"context"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/review/mgr/v2"
+	mgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
 
-	mgrapi "github.com/NpoolPlatform/review-manager/api"
-	mgrcli "github.com/NpoolPlatform/review-manager/pkg/client/review"
+	mgrapi "github.com/NpoolPlatform/review-middleware/api"
 	constant "github.com/NpoolPlatform/review-middleware/pkg/const"
 	review1 "github.com/NpoolPlatform/review-middleware/pkg/review"
 

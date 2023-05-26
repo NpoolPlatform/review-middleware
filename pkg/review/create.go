@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/review/mgr/v2"
+	mgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
 
-	"github.com/NpoolPlatform/review-manager/pkg/db"
-	"github.com/NpoolPlatform/review-manager/pkg/db/ent"
-	entreview "github.com/NpoolPlatform/review-manager/pkg/db/ent/review"
+	// "github.com/NpoolPlatform/review-manager/pkg/db"
+	// "github.com/NpoolPlatform/review-manager/pkg/db/ent"
+	// entreview "github.com/NpoolPlatform/review-manager/pkg/db/ent/review"
 
-	converter "github.com/NpoolPlatform/review-manager/pkg/converter/review"
-	crud "github.com/NpoolPlatform/review-manager/pkg/crud/review"
+	// converter "github.com/NpoolPlatform/review-manager/pkg/converter/review"
+	// crud "github.com/NpoolPlatform/review-manager/pkg/crud/review"
 
 	"github.com/google/uuid"
 )

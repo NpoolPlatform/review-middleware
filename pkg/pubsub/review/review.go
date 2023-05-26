@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	reviewmgrpb "github.com/NpoolPlatform/message/npool/review/mgr/v2"
+	reviewmgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	review1 "github.com/NpoolPlatform/review-middleware/pkg/review"
 )
 
