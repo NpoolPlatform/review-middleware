@@ -2,8 +2,8 @@ package review
 
 import (
 	"context"
+	"fmt"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	"github.com/google/uuid"
 
@@ -13,13 +13,36 @@ import (
 	converter "github.com/NpoolPlatform/review-middleware/pkg/mw/converter/review"
 )
 
-type objectQueryHandler struct {
+type queryObjectHandler struct {
 	*Handler
 	infos     []*npool.Review
 	ObjectIDs []uuid.UUID
 }
 
-func (h *Handler) GetObjectReview(ctx context.Context) (*mgrpb.Review, error) {
+func (h *queryObjectHandler) validate() error {
+	if h.AppID == nil {
+		return fmt.Errorf("invalid app id")
+	}
+	if h.ObjectID == nil {
+		return fmt.Errorf("invalid object id")
+	}
+	if h.Domain == nil {
+		return fmt.Errorf("invalid domain")
+	}
+	if h.ObjectType == nil {
+		return fmt.Errorf("invalid object type")
+	}
+	return nil
+}
+
+func (h *Handler) GetObjectReview(ctx context.Context) (*npool.Review, error) {
+	handler := &queryObjectHandler{
+		Handler: h,
+	}
+	if err := handler.validate(); err != nil {
+		return nil, err
+	}
+
 	var info *ent.Review
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		infos, err := cli.
@@ -51,8 +74,8 @@ func (h *Handler) GetObjectReview(ctx context.Context) (*mgrpb.Review, error) {
 	return converter.Ent2Grpc(info), nil
 }
 
-func (h *Handler) GetObjectReviews(ctx context.Context) ([]*mgrpb.Review, error) {
-	handler := &objectQueryHandler{
+func (h *Handler) GetObjectReviews(ctx context.Context) ([]*npool.Review, error) {
+	handler := &queryObjectHandler{
 		Handler: h,
 	}
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
