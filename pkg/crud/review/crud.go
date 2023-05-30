@@ -55,15 +55,7 @@ func UpdateSet(u *ent.ReviewUpdateOne, in *Req) *ent.ReviewUpdateOne {
 	if in.ReviewerID != nil {
 		u.SetReviewerID(*in.ReviewerID)
 	}
-
-	// TODO: Only ReviewState_Wait can be update
 	if in.State != nil {
-		// switch info.State {
-		// case npool.ReviewState_Wait.String():
-		// default:
-		// 	return nil, fmt.Errorf("permission denied")
-		// }
-		// stm = stm.SetState(in.GetState().String())
 		u.SetState(in.State.String())
 	}
 	if in.Message != nil {
