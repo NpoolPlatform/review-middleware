@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	reviewmgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
-	review1 "github.com/NpoolPlatform/review-middleware/pkg/review"
+	review1 "github.com/NpoolPlatform/review-middleware/pkg/mw/review"
 )
 
 func Prepare(body string) (interface{}, error) {
