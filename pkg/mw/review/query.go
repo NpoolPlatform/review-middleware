@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
 
+	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 	entreview "github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
@@ -92,17 +92,45 @@ func (h *Handler) GetReview(ctx context.Context) (info *npool.Review, err error)
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetReviews(ctx context.Context) ([]*mgrpb.Review, error) {
+func (h *queryHandler) queryCondsByBonds(ctx context.Context, cli *ent.Client) (err error) {
+	stm, err := crud.SetQueryConds(cli.Review.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+
+	h.total = uint32(total)
+
+	h.selectReviews(stm)
+	return nil
+}
+
+func (h *Handler) GetReviews(ctx context.Context) ([]*npool.Review, uint32, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryCondsByBonds(_ctx, cli); err != nil {
+			return err
+		}
+		handler.
+			stm.
+			Offset(int(h.Offset)).
+			Limit(int(h.Limit))
+		if err := handler.scan(_ctx); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return handler.infos, nil
+	handler.formalize()
+	return handler.infos, handler.total, nil
 }
