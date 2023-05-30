@@ -27,6 +27,11 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 
 	infos, total, err := handler.GetReviews(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetReviews",
+			"Req", in,
+			"Error", err,
+		)
 		return &npool.GetReviewsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
