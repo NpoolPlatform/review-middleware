@@ -12,6 +12,7 @@ import (
 	"github.com/NpoolPlatform/basal-middleware/pkg/testinit"
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	appuserpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
@@ -87,6 +88,42 @@ func createReview(t *testing.T) {
 	}
 }
 
+func updateReview(t *testing.T) {
+	ret.State = npool.ReviewState_Rejected
+	ret.StateStr = npool.ReviewState_Rejected.String()
+	ret.Message = uuid.NewString()
+	info, err := UpdateReview(context.Background(), &npool.ReviewReq{
+		ID:      &ret.ID,
+		State:   &ret.State,
+		Message: &ret.Message,
+	})
+	if assert.NotNil(t, err) {
+		ret.Message = info.Message
+		assert.Equal(t, ret, info)
+	}
+}
+
+func getReviews(t *testing.T) {
+	conds := &npool.Conds{
+		ID: &basetypes.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.ID,
+		},
+		AppID: &basetypes.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		State: &basetypes.Int32Val{
+			Op:    cruder.EQ,
+			Value: npool.ReviewState_value[ret.State.String()],
+		},
+	}
+	infos, _, err := GetReviews(context.Background(), conds, 0, 1)
+	if assert.NotNil(t, err) {
+		assert.NotEqual(t, 0, len(infos))
+	}
+}
+
 func TestClient(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction { //nolint
 		return
@@ -94,11 +131,16 @@ func TestClient(t *testing.T) {
 	// Here won't pass test due to we always test with localhost
 	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
 
-	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
+	patch := monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
+	teardown := setupApp(t)
+	defer teardown(t)
+
 	t.Run("createAPI", createReview)
-	// t.Run("updateAPI", updateReview)
-	// t.Run("getAPIs", getReviews)
+	t.Run("updateAPI", updateReview)
+	t.Run("getAPIs", getReviews)
+
+	patch.Unpatch()
 }
