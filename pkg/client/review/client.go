@@ -132,3 +132,19 @@ func GetReviews(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([
 	}
 	return infos.([]*mgrpb.Review), total, nil
 }
+
+func GetReview(ctx context.Context, id string) (*mgrpb.Review, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetReview(ctx, &npool.GetReviewRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("fail get review: %v", err)
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("fail get review: %v", err)
+	}
+	return info.(*mgrpb.Review), nil
+}

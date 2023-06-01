@@ -40,3 +40,31 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 		Total: total,
 	}, nil
 }
+
+func (s *Server) GetReview(ctx context.Context, in *npool.GetReviewRequest) (*npool.GetReviewResponse, error) {
+	handler, err := review1.NewHandler(ctx,
+		review1.WithID(&in.ID),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetReview",
+			"Req", in,
+			"Error", err,
+		)
+		return &npool.GetReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := handler.GetReview(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetReview",
+			"Req", in,
+			"Error", err,
+		)
+		return &npool.GetReviewResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetReviewResponse{
+		Info: info,
+	}, nil
+}
