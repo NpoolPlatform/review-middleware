@@ -2,7 +2,6 @@ package review
 
 import (
 	"context"
-	"fmt"
 
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
@@ -16,18 +15,6 @@ type createHandler struct {
 }
 
 func (h *createHandler) validate() error {
-	if h.AppID == nil {
-		return fmt.Errorf("invalid app id")
-	}
-	if h.ObjectID == nil {
-		return fmt.Errorf("invalid object id")
-	}
-	if h.Domain == nil {
-		return fmt.Errorf("invalid domain")
-	}
-	if h.ReviewerID == nil {
-		return fmt.Errorf("invalid reviewer id")
-	}
 	return nil
 }
 
@@ -43,6 +30,7 @@ func (h *Handler) CreateReview(ctx context.Context) (info *npool.Review, err err
 		info, err := crud.CreateSet(
 			cli.Review.Create(),
 			&crud.Req{
+				ID:         h.ID,
 				AppID:      h.AppID,
 				ReviewerID: h.ReviewerID,
 				Domain:     h.Domain,
@@ -54,6 +42,7 @@ func (h *Handler) CreateReview(ctx context.Context) (info *npool.Review, err err
 		if err != nil {
 			return err
 		}
+
 		h.ID = &info.ID
 		return nil
 	})

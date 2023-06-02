@@ -13,6 +13,7 @@ import (
 func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest) (*npool.CreateReviewResponse, error) {
 	req := in.GetInfo()
 	handler, err := review1.NewHandler(ctx,
+		review1.WithID(req.ID),
 		review1.WithAppID(req.AppID),
 		review1.WithDomain(req.Domain),
 		review1.WithReviewerID(req.ReviewerID),

@@ -84,9 +84,6 @@ func WithReviewerID(id *string) func(context.Context, *Handler) error {
 
 func WithObjectID(id *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			return nil
-		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
 			return err
@@ -141,9 +138,6 @@ func WithTrigger(trigger *npool.ReviewTriggerType) func(context.Context, *Handle
 
 func WithObjectType(_type *npool.ReviewObjectType) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if _type == nil {
-			return nil
-		}
 		switch *_type {
 		case npool.ReviewObjectType_ObjectKyc:
 		case npool.ReviewObjectType_ObjectWithdrawal:
