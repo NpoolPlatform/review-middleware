@@ -138,9 +138,9 @@ func TestClient(t *testing.T) {
 	teardown := setupApp(t)
 	defer teardown(t)
 
-	t.Run("createAPI", createReview)
-	t.Run("updateAPI", updateReview)
-	t.Run("getAPIs", getReviews)
+	t.Run("createReview", createReview)
+	t.Run("createReview", createReview)
+	t.Run("getReviews", getReviews)
 
 	patch.Unpatch()
 }
