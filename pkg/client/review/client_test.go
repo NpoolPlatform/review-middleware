@@ -133,12 +133,12 @@ func TestClient(t *testing.T) {
 	// Here won't pass test due to we always test with localhost
 	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
 
+	teardown := setupApp(t)
+	defer teardown(t)
+
 	patch := monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
-
-	teardown := setupApp(t)
-	defer teardown(t)
 
 	t.Run("createReview", createReview)
 	t.Run("updateReview", updateReview)
