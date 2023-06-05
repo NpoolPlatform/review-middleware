@@ -18,7 +18,7 @@ type Handler struct {
 	ReviewerID *uuid.UUID
 	Domain     *string
 	ObjectID   *uuid.UUID
-	ObjectIDs  []*uuid.UUID
+	ObjectIDs  []uuid.UUID
 	Trigger    *npool.ReviewTriggerType
 	ObjectType *npool.ReviewObjectType
 	State      *npool.ReviewState
@@ -103,7 +103,7 @@ func WithObjectIDs(ids []string) func(context.Context, *Handler) error {
 			if err != nil {
 				return err
 			}
-			h.ObjectIDs = append(h.ObjectIDs, &uid)
+			h.ObjectIDs = append(h.ObjectIDs, uid)
 		}
 		return nil
 	}

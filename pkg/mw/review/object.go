@@ -85,7 +85,7 @@ func (h *Handler) GetObjectReviews(ctx context.Context) ([]*npool.Review, error)
 			Where(
 				entreview.AppID(*h.AppID),
 				entreview.Domain(*h.Domain),
-				entreview.ObjectIDIn(handler.ObjectIDs...),
+				entreview.ObjectIDIn(h.ObjectIDs...),
 				entreview.ObjectType(h.ObjectType.String()),
 			).
 			Order(ent.Desc(entreview.FieldUpdatedAt)).
