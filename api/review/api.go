@@ -1,14 +1,14 @@
 package review
 
 import (
-	"github.com/NpoolPlatform/message/npool/review/mw/v2/review"
+	review1 "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	review.UnimplementedMiddlewareServer
+	review1.UnimplementedMiddlewareServer
 }
 
 func Register(server grpc.ServiceRegistrar) {
-	review.RegisterMiddlewareServer(server, &Server{})
+	review1.RegisterMiddlewareServer(server, &Server{})
 }
