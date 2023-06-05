@@ -49,6 +49,7 @@ var (
 		Name:                     uuid.NewString(),
 		Logo:                     uuid.NewString(),
 		CreatedBy:                uuid.NewString(),
+		Description:              uuid.NewString(),
 		RecaptchaMethod:          basetypes.RecaptchaMethod_GoogleRecaptchaV3,
 		CreateInvitationCodeWhen: basetypes.CreateInvitationCodeWhen_Registration,
 	}
@@ -58,6 +59,7 @@ func setupApp(t *testing.T) func(*testing.T) {
 	info, err := appusercli.CreateApp(context.Background(), &appuserpb.AppReq{
 		Name:                     &app.Name,
 		Logo:                     &app.Logo,
+		Description:              &app.Description,
 		CreatedBy:                &app.CreatedBy,
 		RecaptchaMethod:          &app.RecaptchaMethod,
 		CreateInvitationCodeWhen: &app.CreateInvitationCodeWhen,
