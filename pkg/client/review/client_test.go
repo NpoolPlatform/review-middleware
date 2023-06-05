@@ -139,7 +139,7 @@ func TestClient(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createReview", createReview)
-	t.Run("createReview", createReview)
+	t.Run("updateReview", updateReview)
 	t.Run("getReviews", getReviews)
 
 	patch.Unpatch()
