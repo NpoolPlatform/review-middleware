@@ -136,11 +136,12 @@ func getReview(t *testing.T) {
 }
 
 func deleteReview(t *testing.T) {
-	info, err := DeleteReview(context.Background(), ret.ID)
-	if assert.Nil(t, err) {
-		assert.Equal(t, ret, info)
-	}
+	_, err := DeleteReview(context.Background(), ret.ID)
+	assert.Nil(t, err)
+	info, _ := GetReview(context.Background(), ret.ID)
+	assert.Nil(t, info)
 }
+
 func TestClient(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
