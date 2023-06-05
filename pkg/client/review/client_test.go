@@ -128,6 +128,13 @@ func getReviews(t *testing.T) {
 	}
 }
 
+func getReview(t *testing.T) {
+	info, err := GetReview(context.Background(), ret.ID)
+	if assert.Nil(t, err) {
+		assert.Equal(t, ret, info)
+	}
+}
+
 func TestClient(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
@@ -145,6 +152,7 @@ func TestClient(t *testing.T) {
 	t.Run("createReview", createReview)
 	t.Run("updateReview", updateReview)
 	t.Run("getReviews", getReviews)
+	t.Run("getReview", getReview)
 
 	patch.Unpatch()
 }
