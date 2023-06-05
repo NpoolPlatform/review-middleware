@@ -152,7 +152,8 @@ func getObjectReview(t *testing.T) {
 func deleteReview(t *testing.T) {
 	_, err := DeleteReview(context.Background(), ret.ID)
 	assert.Nil(t, err)
-	info, _ := GetReview(context.Background(), ret.ID)
+	info, err := GetReview(context.Background(), ret.ID)
+	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
 
