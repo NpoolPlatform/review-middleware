@@ -32,6 +32,7 @@ func (h *queryHandler) selectReviews(stm *ent.ReviewQuery) {
 		entreview.FieldTrigger,
 		entreview.FieldObjectType,
 		entreview.FieldState,
+		entreview.FieldMessage,
 		entreview.FieldCreatedAt,
 		entreview.FieldUpdatedAt,
 	)
