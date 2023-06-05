@@ -4,8 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/NpoolPlatform/basal-middleware/pkg/db/mixin"
 	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	"github.com/NpoolPlatform/review-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
 )
 
