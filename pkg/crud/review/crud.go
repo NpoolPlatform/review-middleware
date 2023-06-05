@@ -45,7 +45,7 @@ func CreateSet(c *ent.ReviewCreate, in *Req) *ent.ReviewCreate {
 		c.SetTrigger(in.Trigger.String())
 	}
 	if in.ObjectType != nil {
-		c.SetObjectType(in.ObjectID.String())
+		c.SetObjectType(in.ObjectType.String())
 	}
 	c.SetState(npool.ReviewState_Wait.String())
 	return c
