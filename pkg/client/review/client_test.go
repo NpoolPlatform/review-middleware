@@ -41,6 +41,8 @@ var (
 		ReviewerID:    uuid.NewString(),
 		State:         npool.ReviewState_Wait,
 		StateStr:      npool.ReviewState_Wait.String(),
+		Trigger:       npool.ReviewTriggerType_DefaultTriggerType,
+		TriggerStr:    npool.ReviewTriggerType_DefaultTriggerType.String(),
 		Message:       "",
 	}
 )
@@ -82,7 +84,6 @@ func createReview(t *testing.T) {
 		ObjectID:   &ret.ObjectID,
 		ObjectType: &ret.ObjectType,
 		ReviewerID: &ret.ReviewerID,
-		Trigger:    &ret.Trigger,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
