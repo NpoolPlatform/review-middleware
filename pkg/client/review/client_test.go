@@ -41,6 +41,7 @@ var (
 		ReviewerID:    uuid.NewString(),
 		State:         npool.ReviewState_Wait,
 		StateStr:      npool.ReviewState_Wait.String(),
+		Message:       "",
 	}
 )
 
@@ -86,7 +87,7 @@ func createReview(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
-		ret.Message = info.Message
+		ret.UpdatedAt = info.UpdatedAt
 	}
 }
 
