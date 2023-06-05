@@ -83,7 +83,7 @@ func createReview(t *testing.T) {
 		ReviewerID: &ret.ReviewerID,
 		Trigger:    &ret.Trigger,
 	})
-	if assert.NotNil(t, err) {
+	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.Message = info.Message
@@ -99,7 +99,7 @@ func updateReview(t *testing.T) {
 		State:   &ret.State,
 		Message: &ret.Message,
 	})
-	if assert.NotNil(t, err) {
+	if assert.Nil(t, err) {
 		ret.Message = info.Message
 		assert.Equal(t, ret, info)
 	}
@@ -121,7 +121,7 @@ func getReviews(t *testing.T) {
 		},
 	}
 	infos, _, err := GetReviews(context.Background(), conds, 0, 1)
-	if assert.NotNil(t, err) {
+	if assert.Nil(t, err) {
 		assert.NotEqual(t, 0, len(infos))
 	}
 }
