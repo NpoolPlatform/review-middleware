@@ -136,7 +136,7 @@ func getReview(t *testing.T) {
 }
 
 func getObjectReviews(t *testing.T) {
-	infos, err := GetObjectReviews(context.Background(), ret.AppID, ret.Domain, nil, ret.ObjectType)
+	infos, err := GetObjectReviews(context.Background(), ret.AppID, ret.Domain, []string{ret.ObjectID}, ret.ObjectType)
 	if assert.Nil(t, err) {
 		assert.Equal(t, ret, infos[0])
 	}
