@@ -6,7 +6,7 @@ import (
 	"github.com/NpoolPlatform/review-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
 
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 )
 
 // Review holds the schema definition for the Review entity.

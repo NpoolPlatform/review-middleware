@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"

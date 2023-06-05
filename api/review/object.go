@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	object1 "github.com/NpoolPlatform/review-middleware/pkg/mw/review"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

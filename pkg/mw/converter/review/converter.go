@@ -1,7 +1,7 @@
 package review
 
 import (
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 )
 

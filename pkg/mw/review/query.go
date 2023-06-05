@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"

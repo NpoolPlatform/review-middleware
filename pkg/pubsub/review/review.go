@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	review1 "github.com/NpoolPlatform/review-middleware/pkg/mw/review"
 )
 

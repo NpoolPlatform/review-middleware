@@ -14,7 +14,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	appuserpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

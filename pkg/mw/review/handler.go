@@ -6,7 +6,7 @@ import (
 
 	appcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	constant "github.com/NpoolPlatform/review-middleware/pkg/const"
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/google/uuid"
