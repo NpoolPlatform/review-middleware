@@ -227,8 +227,8 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.ObjectType = &cruder.Cond{Op: conds.ObjectType.Op, Val: npool.ReviewObjectType(_type)}
 		}
 		if conds.State != nil {
-			_type := conds.GetObjectType().GetValue()
-			h.Conds.ObjectType = &cruder.Cond{Op: conds.ObjectType.Op, Val: npool.ReviewObjectType(_type)}
+			_state := conds.GetState().GetValue()
+			h.Conds.State = &cruder.Cond{Op: conds.State.Op, Val: npool.ReviewState(_state)}
 		}
 		return nil
 	}
