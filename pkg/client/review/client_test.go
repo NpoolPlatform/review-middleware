@@ -134,6 +134,24 @@ func getReview(t *testing.T) {
 	}
 }
 
+func existReviewConds(t *testing.T) {
+	exist, err := ExistReviewConds(context.Background(), &npool.ExistReviewCondsRequest{
+		Conds: &npool.Conds{
+			AppID: &basetypes.StringVal{
+				Op:    cruder.EQ,
+				Value: ret.AppID,
+			},
+			ID: &basetypes.StringVal{
+				Op:    cruder.EQ,
+				Value: ret.ID,
+			},
+		},
+	})
+	if assert.Nil(t, err) {
+		assert.True(t, exist)
+	}
+}
+
 func getObjectReviews(t *testing.T) {
 	infos, err := GetObjectReviews(context.Background(), ret.AppID, ret.Domain, []string{ret.ObjectID}, ret.ObjectType)
 	if assert.Nil(t, err) {
@@ -174,8 +192,10 @@ func TestClient(t *testing.T) {
 	t.Run("updateReview", updateReview)
 	t.Run("getReviews", getReviews)
 	t.Run("getReview", getReview)
+	t.Run("existReviewConds", existReviewConds)
 	t.Run("getObjectReviews", getObjectReviews)
 	t.Run("getObjectReview", getObjectReview)
+
 	t.Run("deleteReview", deleteReview)
 
 	patch.Unpatch()
