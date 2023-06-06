@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ExistReview(ctx context.Context, in *npool.ExistReviewCondsRequest) (*npool.ExistReviewCondsResponse, error) {
+func (s *Server) ExistReviewConds(ctx context.Context, in *npool.ExistReviewCondsRequest) (*npool.ExistReviewCondsResponse, error) {
 	handler, err := review1.NewHandler(ctx,
 		review1.WithConds(in.GetConds()),
 	)
