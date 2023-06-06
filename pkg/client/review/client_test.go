@@ -102,7 +102,6 @@ func updateReview(t *testing.T) {
 		Message: &ret.Message,
 	})
 	if assert.Nil(t, err) {
-		ret.Message = info.Message
 		assert.Equal(t, ret, info)
 	}
 }
