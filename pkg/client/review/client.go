@@ -166,3 +166,18 @@ func DeleteReview(ctx context.Context, id string) (*npool.Review, error) {
 
 	return info.(*npool.Review), nil
 }
+
+func ExistReviewConds(ctx context.Context, conds *npool.ExistReviewCondsRequest) (bool, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.ExistCondsReview(ctx, conds)
+		if err != nil {
+			return nil, fmt.Errorf("fail exist review: %v", err)
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return false, fmt.Errorf("fail exist review: %v", err)
+	}
+
+	return info.(bool), nil
+}
