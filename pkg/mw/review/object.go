@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
-	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
@@ -15,8 +14,7 @@ import (
 
 type queryObjectHandler struct {
 	*Handler
-	infos     []*npool.Review
-	ObjectIDs []uuid.UUID
+	infos []*npool.Review
 }
 
 func (h *queryObjectHandler) validate() error {
