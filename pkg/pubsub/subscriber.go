@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	"github.com/NpoolPlatform/review-manager/pkg/db"
-	"github.com/NpoolPlatform/review-manager/pkg/db/ent"
-	entpubsubmsg "github.com/NpoolPlatform/review-manager/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/review-middleware/pkg/db"
+	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
+	entpubsubmsg "github.com/NpoolPlatform/review-middleware/pkg/db/ent/pubsubmessage"
 	review "github.com/NpoolPlatform/review-middleware/pkg/pubsub/review"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"

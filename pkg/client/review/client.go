@@ -9,8 +9,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	mgrpb "github.com/NpoolPlatform/message/npool/review/mgr/v2"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2"
+	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	constant "github.com/NpoolPlatform/review-middleware/pkg/message/const"
 )
@@ -35,7 +34,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, error) {
+func CreateReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.CreateReview(ctx, &npool.CreateReviewRequest{
 			Info: in,
@@ -48,10 +47,10 @@ func CreateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, erro
 	if err != nil {
 		return nil, fmt.Errorf("fail create review: %v", err)
 	}
-	return info.(*mgrpb.Review), nil
+	return info.(*npool.Review), nil
 }
 
-func UpdateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, error) {
+func UpdateReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateReview(ctx, &npool.UpdateReviewRequest{
 			Info: in,
@@ -64,10 +63,10 @@ func UpdateReview(ctx context.Context, in *mgrpb.ReviewReq) (*mgrpb.Review, erro
 	if err != nil {
 		return nil, fmt.Errorf("fail update review: %v", err)
 	}
-	return info.(*mgrpb.Review), nil
+	return info.(*npool.Review), nil
 }
 
-func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType mgrpb.ReviewObjectType) (*mgrpb.Review, error) {
+func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType npool.ReviewObjectType) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetObjectReview(ctx, &npool.GetObjectReviewRequest{
 			AppID:      appID,
@@ -83,16 +82,16 @@ func GetObjectReview(ctx context.Context, appID, domain, objectID string, object
 	if err != nil {
 		return nil, fmt.Errorf("fail get review: %v", err)
 	}
-	return info.(*mgrpb.Review), nil
+	return info.(*npool.Review), nil
 }
 
 func GetObjectReviews(
 	ctx context.Context,
 	appID, domain string,
 	objectIDs []string,
-	objectType mgrpb.ReviewObjectType,
+	objectType npool.ReviewObjectType,
 ) (
-	[]*mgrpb.Review, error,
+	[]*npool.Review, error,
 ) {
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetObjectReviews(ctx, &npool.GetObjectReviewsRequest{
@@ -109,10 +108,10 @@ func GetObjectReviews(
 	if err != nil {
 		return nil, fmt.Errorf("fail get review: %v", err)
 	}
-	return infos.([]*mgrpb.Review), nil
+	return infos.([]*npool.Review), nil
 }
 
-func GetReviews(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.Review, uint32, error) {
+func GetReviews(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Review, uint32, error) {
 	var total uint32
 
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
@@ -130,5 +129,55 @@ func GetReviews(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([
 	if err != nil {
 		return nil, 0, fmt.Errorf("fail get reviews: %v", err)
 	}
-	return infos.([]*mgrpb.Review), total, nil
+	return infos.([]*npool.Review), total, nil
+}
+
+func GetReview(ctx context.Context, id string) (*npool.Review, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetReview(ctx, &npool.GetReviewRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("fail get review: %v", err)
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("fail get review: %v", err)
+	}
+	return info.(*npool.Review), nil
+}
+
+func DeleteReview(ctx context.Context, id string) (*npool.Review, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteReview(ctx, &npool.DeleteReviewRequest{
+			Info: &npool.ReviewReq{
+				ID: &id,
+			},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("fail delete review: %v", err)
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("fail delete review: %v", err)
+	}
+
+	return info.(*npool.Review), nil
+}
+
+func ExistReviewConds(ctx context.Context, conds *npool.ExistReviewCondsRequest) (bool, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.ExistReviewConds(ctx, conds)
+		if err != nil {
+			return nil, fmt.Errorf("fail exist review: %v", err)
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return false, fmt.Errorf("fail exist review: %v", err)
+	}
+
+	return info.(bool), nil
 }

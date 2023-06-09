@@ -6,8 +6,8 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/action"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	"github.com/NpoolPlatform/review-manager/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/api"
+	"github.com/NpoolPlatform/review-middleware/pkg/db"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 
@@ -69,6 +69,5 @@ func rpcGatewayRegister(mux *runtime.ServeMux, endpoint string, opts []grpc.Dial
 		return err
 	}
 
-	_ = apicli.Register(mux)
 	return nil
 }
