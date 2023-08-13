@@ -7,7 +7,7 @@ require (
 	entgo.io/ent v0.11.2
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230609030803-0b26c1f95713
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20230812113554-9fa7285b9d16
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230813053445-1f5c88e41f5c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
 	github.com/NpoolPlatform/message v0.0.0-20230609022557-928f8f5a1bbe
 	github.com/google/uuid v1.3.0
