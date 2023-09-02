@@ -6,6 +6,7 @@ import (
 
 	appcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	constant "github.com/NpoolPlatform/review-middleware/pkg/const"
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
@@ -19,9 +20,9 @@ type Handler struct {
 	Domain     *string
 	ObjectID   *uuid.UUID
 	ObjectIDs  []uuid.UUID
-	Trigger    *npool.ReviewTriggerType
-	ObjectType *npool.ReviewObjectType
-	State      *npool.ReviewState
+	Trigger    *types.ReviewTriggerType
+	ObjectType *types.ReviewObjectType
+	State      *types.ReviewState
 	Message    *string
 	Offset     int32
 	Limit      int32
@@ -119,17 +120,17 @@ func WithDomain(domain *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithTrigger(trigger *npool.ReviewTriggerType) func(context.Context, *Handler) error {
+func WithTrigger(trigger *types.ReviewTriggerType) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if trigger == nil {
 			return nil
 		}
 		switch *trigger {
-		case npool.ReviewTriggerType_InsufficientFunds:
-		case npool.ReviewTriggerType_InsufficientGas:
-		case npool.ReviewTriggerType_InsufficientFundsGas:
-		case npool.ReviewTriggerType_LargeAmount:
-		case npool.ReviewTriggerType_AutoReviewed:
+		case types.ReviewTriggerType_InsufficientFunds:
+		case types.ReviewTriggerType_InsufficientGas:
+		case types.ReviewTriggerType_InsufficientFundsGas:
+		case types.ReviewTriggerType_LargeAmount:
+		case types.ReviewTriggerType_AutoReviewed:
 		default:
 			return fmt.Errorf("invalid trigger type")
 		}
@@ -139,11 +140,11 @@ func WithTrigger(trigger *npool.ReviewTriggerType) func(context.Context, *Handle
 	}
 }
 
-func WithObjectType(_type *npool.ReviewObjectType) func(context.Context, *Handler) error {
+func WithObjectType(_type *types.ReviewObjectType) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		switch *_type {
-		case npool.ReviewObjectType_ObjectKyc:
-		case npool.ReviewObjectType_ObjectWithdrawal:
+		case types.ReviewObjectType_ObjectKyc:
+		case types.ReviewObjectType_ObjectWithdrawal:
 		default:
 			return fmt.Errorf("invalid object type")
 		}
@@ -152,18 +153,18 @@ func WithObjectType(_type *npool.ReviewObjectType) func(context.Context, *Handle
 	}
 }
 
-func WithState(state *npool.ReviewState, message *string) func(context.Context, *Handler) error {
+func WithState(state *types.ReviewState, message *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			return nil
 		}
 		switch *state {
-		case npool.ReviewState_Rejected:
-		case npool.ReviewState_Approved:
+		case types.ReviewState_Rejected:
+		case types.ReviewState_Approved:
 		default:
 			return fmt.Errorf("invalid review state")
 		}
-		if *state == npool.ReviewState_Rejected && message == nil {
+		if *state == types.ReviewState_Rejected && message == nil {
 			return fmt.Errorf("message is empty")
 		}
 		h.State = state
@@ -220,15 +221,15 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.Trigger != nil {
 			trigger := conds.GetTrigger().GetValue()
-			h.Conds.Trigger = &cruder.Cond{Op: conds.Trigger.Op, Val: npool.ReviewTriggerType(trigger)}
+			h.Conds.Trigger = &cruder.Cond{Op: conds.Trigger.Op, Val: types.ReviewTriggerType(trigger)}
 		}
 		if conds.ObjectType != nil {
 			_type := conds.GetObjectType().GetValue()
-			h.Conds.ObjectType = &cruder.Cond{Op: conds.ObjectType.Op, Val: npool.ReviewObjectType(_type)}
+			h.Conds.ObjectType = &cruder.Cond{Op: conds.ObjectType.Op, Val: types.ReviewObjectType(_type)}
 		}
 		if conds.State != nil {
 			_state := conds.GetState().GetValue()
-			h.Conds.State = &cruder.Cond{Op: conds.State.Op, Val: npool.ReviewState(_state)}
+			h.Conds.State = &cruder.Cond{Op: conds.State.Op, Val: types.ReviewState(_state)}
 		}
 		return nil
 	}

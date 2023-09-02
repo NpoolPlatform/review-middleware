@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
@@ -16,8 +17,8 @@ func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err err
 		return nil, err
 	}
 	switch info.State {
-	case npool.ReviewState_DefaultReviewState:
-	case npool.ReviewState_Wait:
+	case types.ReviewState_DefaultReviewState:
+	case types.ReviewState_Wait:
 	default:
 		return nil, fmt.Errorf("current state can not be update")
 	}
