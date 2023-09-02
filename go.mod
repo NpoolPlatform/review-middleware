@@ -12,7 +12,6 @@ require (
 	github.com/NpoolPlatform/message v0.0.0-20230902094603-f39291cede75
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
-	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.4.0
 	google.golang.org/grpc v1.55.0
