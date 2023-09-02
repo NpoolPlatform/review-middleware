@@ -9,6 +9,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	servicename "github.com/NpoolPlatform/review-middleware/pkg/servicename"
@@ -66,7 +67,7 @@ func UpdateReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, erro
 	return info.(*npool.Review), nil
 }
 
-func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType npool.ReviewObjectType) (*npool.Review, error) {
+func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType types.ReviewObjectType) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetObjectReview(ctx, &npool.GetObjectReviewRequest{
 			AppID:      appID,
@@ -89,7 +90,7 @@ func GetObjectReviews(
 	ctx context.Context,
 	appID, domain string,
 	objectIDs []string,
-	objectType npool.ReviewObjectType,
+	objectType types.ReviewObjectType,
 ) (
 	[]*npool.Review, error,
 ) {
