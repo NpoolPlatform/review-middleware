@@ -23,6 +23,10 @@ func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err err
 		return nil, fmt.Errorf("current state can not be update")
 	}
 
+	if h.State != nil && *h.State == types.ReviewState_Rejected && (h.Message == nil || *h.Message == "") {
+		return nil, fmt.Errorf("message is empty")
+	}
+
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := crud.UpdateSet(
 			cli.Review.UpdateOneID(*h.ID),

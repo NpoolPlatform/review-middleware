@@ -39,9 +39,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -53,10 +56,13 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(appID *string) func(context.Context, *Handler) error {
+func WithAppID(appID *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_appID, err := uuid.Parse(*appID)
 		if err != nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return err
 		}
 		exist, err := appcli.ExistApp(ctx, *appID)
@@ -72,9 +78,12 @@ func WithAppID(appID *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithReviewerID(id *string) func(context.Context, *Handler) error {
+func WithReviewerID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid reviewerid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -86,8 +95,14 @@ func WithReviewerID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithObjectID(id *string) func(context.Context, *Handler) error {
+func WithObjectID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid objectid")
+			}
+			return nil
+		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
 			return err
@@ -97,7 +112,7 @@ func WithObjectID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithObjectIDs(ids []string) func(context.Context, *Handler) error {
+func WithObjectIDs(ids []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		for _, id := range ids {
 			uid, err := uuid.Parse(id)
@@ -110,19 +125,25 @@ func WithObjectIDs(ids []string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithDomain(domain *string) func(context.Context, *Handler) error {
+func WithDomain(domain *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if domain == nil {
-			return fmt.Errorf("invalid domain")
+			if must {
+				return fmt.Errorf("invalid domain")
+			}
+			return nil
 		}
 		h.Domain = domain
 		return nil
 	}
 }
 
-func WithTrigger(trigger *types.ReviewTriggerType) func(context.Context, *Handler) error {
+func WithTrigger(trigger *types.ReviewTriggerType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if trigger == nil {
+			if must {
+				return fmt.Errorf("invalid trigger")
+			}
 			return nil
 		}
 		switch *trigger {
@@ -140,8 +161,14 @@ func WithTrigger(trigger *types.ReviewTriggerType) func(context.Context, *Handle
 	}
 }
 
-func WithObjectType(_type *types.ReviewObjectType) func(context.Context, *Handler) error {
+func WithObjectType(_type *types.ReviewObjectType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if _type == nil {
+			if must {
+				return fmt.Errorf("invalid type")
+			}
+			return nil
+		}
 		switch *_type {
 		case types.ReviewObjectType_ObjectKyc:
 		case types.ReviewObjectType_ObjectWithdrawal:
@@ -153,9 +180,12 @@ func WithObjectType(_type *types.ReviewObjectType) func(context.Context, *Handle
 	}
 }
 
-func WithState(state *types.ReviewState, message *string) func(context.Context, *Handler) error {
+func WithState(state *types.ReviewState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
+			if must {
+				return fmt.Errorf("invalid state")
+			}
 			return nil
 		}
 		switch *state {
@@ -164,19 +194,13 @@ func WithState(state *types.ReviewState, message *string) func(context.Context, 
 		default:
 			return fmt.Errorf("invalid review state")
 		}
-		if *state == types.ReviewState_Rejected && message == nil {
-			return fmt.Errorf("message is empty")
-		}
 		h.State = state
 		return nil
 	}
 }
 
-func WithMessage(message *string) func(context.Context, *Handler) error {
+func WithMessage(message *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if message == nil {
-			return nil
-		}
 		h.Message = message
 		return nil
 	}

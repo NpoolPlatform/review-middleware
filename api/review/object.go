@@ -13,10 +13,10 @@ import (
 func (s *Server) GetObjectReview(ctx context.Context, in *npool.GetObjectReviewRequest) (*npool.GetObjectReviewResponse, error) {
 	handler, err := object1.NewHandler(
 		ctx,
-		object1.WithAppID(&in.AppID),
-		object1.WithObjectID(&in.ObjectID),
-		object1.WithDomain(&in.Domain),
-		object1.WithObjectType(&in.ObjectType),
+		object1.WithAppID(&in.AppID, true),
+		object1.WithObjectID(&in.ObjectID, true),
+		object1.WithDomain(&in.Domain, true),
+		object1.WithObjectType(&in.ObjectType, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -45,10 +45,10 @@ func (s *Server) GetObjectReview(ctx context.Context, in *npool.GetObjectReviewR
 func (s *Server) GetObjectReviews(ctx context.Context, in *npool.GetObjectReviewsRequest) (*npool.GetObjectReviewsResponse, error) {
 	handler, err := object1.NewHandler(
 		ctx,
-		object1.WithAppID(&in.AppID),
-		object1.WithObjectIDs(in.GetObjectIDs()),
-		object1.WithDomain(&in.Domain),
-		object1.WithObjectType(&in.ObjectType),
+		object1.WithAppID(&in.AppID, true),
+		object1.WithObjectIDs(in.GetObjectIDs(), true),
+		object1.WithDomain(&in.Domain, true),
+		object1.WithObjectType(&in.ObjectType, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -43,7 +43,7 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 
 func (s *Server) GetReview(ctx context.Context, in *npool.GetReviewRequest) (*npool.GetReviewResponse, error) {
 	handler, err := review1.NewHandler(ctx,
-		review1.WithID(&in.ID),
+		review1.WithID(&in.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

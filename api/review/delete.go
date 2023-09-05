@@ -13,7 +13,7 @@ import (
 func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest) (*npool.DeleteReviewResponse, error) {
 	req := in.GetInfo()
 	handler, err := review1.NewHandler(ctx,
-		review1.WithID(req.ID),
+		review1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
