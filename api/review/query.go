@@ -19,7 +19,7 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 	if err != nil {
 		logger.Sugar().Errorw(
 			"GetReviews",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.GetReviewsResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -29,7 +29,7 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 	if err != nil {
 		logger.Sugar().Errorw(
 			"GetReviews",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.GetReviewsResponse{}, status.Error(codes.Internal, err.Error())
@@ -48,7 +48,7 @@ func (s *Server) GetReview(ctx context.Context, in *npool.GetReviewRequest) (*np
 	if err != nil {
 		logger.Sugar().Errorw(
 			"GetReview",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.GetReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -58,7 +58,7 @@ func (s *Server) GetReview(ctx context.Context, in *npool.GetReviewRequest) (*np
 	if err != nil {
 		logger.Sugar().Errorw(
 			"GetReview",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.GetReviewResponse{}, status.Error(codes.Internal, err.Error())

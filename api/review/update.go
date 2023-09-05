@@ -21,7 +21,7 @@ func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateReview",
-			"Req", req,
+			"In", req,
 			"Error", err,
 		)
 		return &npool.UpdateReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -31,7 +31,7 @@ func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateReview",
-			"Req", req,
+			"In", req,
 			"Error", err,
 		)
 		return &npool.UpdateReviewResponse{}, status.Error(codes.Internal, err.Error())

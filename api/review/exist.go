@@ -17,7 +17,7 @@ func (s *Server) ExistReviewConds(ctx context.Context, in *npool.ExistReviewCond
 	if err != nil {
 		logger.Sugar().Errorw(
 			"ExistReview",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.ExistReviewCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -27,7 +27,7 @@ func (s *Server) ExistReviewConds(ctx context.Context, in *npool.ExistReviewCond
 	if err != nil {
 		logger.Sugar().Errorw(
 			"ExistReview",
-			"Req", in,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.ExistReviewCondsResponse{}, status.Error(codes.Internal, err.Error())
