@@ -9,6 +9,8 @@ import (
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
+
+	"github.com/google/uuid"
 )
 
 func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err error) {
@@ -20,9 +22,12 @@ func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err err
 	case types.ReviewState_DefaultReviewState:
 	case types.ReviewState_Wait:
 	default:
-		return nil, fmt.Errorf("current state can not be update")
+		return nil, fmt.Errorf("permission denied")
 	}
 
+	if info.ReviewerID != uuid.Nil.String() && h.ReviewerID != nil {
+		return nil, fmt.Errorf("permission denied")
+	}
 	if h.State != nil && *h.State == types.ReviewState_Rejected && (h.Message == nil || *h.Message == "") {
 		return nil, fmt.Errorf("message is empty")
 	}
