@@ -12,6 +12,13 @@ import (
 
 func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest) (*npool.UpdateReviewResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"UpdateReview",
+			"In", in,
+		)
+		return &npool.UpdateReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
+	}
 	handler, err := review1.NewHandler(ctx,
 		review1.WithID(req.ID, true),
 		review1.WithReviewerID(req.ReviewerID, false),
@@ -21,7 +28,7 @@ func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateReview",
-			"In", req,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.UpdateReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -31,7 +38,7 @@ func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateReview",
-			"In", req,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.UpdateReviewResponse{}, status.Error(codes.Internal, err.Error())
