@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	appcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
@@ -58,21 +57,16 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 
 func WithAppID(appID *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		_appID, err := uuid.Parse(*appID)
-		if err != nil {
+		if appID == nil {
 			if must {
 				return fmt.Errorf("invalid appid")
 			}
-			return err
+			return nil
 		}
-		exist, err := appcli.ExistApp(ctx, *appID)
+		_appID, err := uuid.Parse(*appID)
 		if err != nil {
 			return err
 		}
-		if !exist {
-			return fmt.Errorf("invalid app")
-		}
-
 		h.AppID = &_appID
 		return nil
 	}

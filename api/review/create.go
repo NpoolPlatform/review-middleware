@@ -20,7 +20,7 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 		return &npool.CreateReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
 	}
 	handler, err := review1.NewHandler(ctx,
-		review1.WithID(req.ID, true),
+		review1.WithID(req.ID, false),
 		review1.WithAppID(req.AppID, true),
 		review1.WithDomain(req.Domain, true),
 		review1.WithReviewerID(req.ReviewerID, false),
