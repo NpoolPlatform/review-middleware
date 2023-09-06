@@ -18,6 +18,9 @@ func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err err
 	if err != nil {
 		return nil, err
 	}
+	if info == nil {
+		return nil, fmt.Errorf("invalid review")
+	}
 	switch info.State {
 	case types.ReviewState_DefaultReviewState:
 	case types.ReviewState_Wait:
