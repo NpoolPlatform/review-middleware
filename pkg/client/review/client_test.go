@@ -42,8 +42,8 @@ var (
 		ReviewerID:    uuid.NewString(),
 		State:         types.ReviewState_Wait,
 		StateStr:      types.ReviewState_Wait.String(),
-		Trigger:       types.ReviewTriggerType_DefaultTriggerType,
-		TriggerStr:    types.ReviewTriggerType_DefaultTriggerType.String(),
+		Trigger:       types.ReviewTriggerType_InsufficientGas,
+		TriggerStr:    types.ReviewTriggerType_InsufficientGas.String(),
 		Message:       "",
 	}
 )
@@ -84,6 +84,7 @@ func createReview(t *testing.T) {
 		Domain:     &ret.Domain,
 		ObjectID:   &ret.ObjectID,
 		ObjectType: &ret.ObjectType,
+		Trigger:    &ret.Trigger,
 		ReviewerID: &ret.ReviewerID,
 	})
 	if assert.Nil(t, err) {
