@@ -25,12 +25,12 @@ func Apply(ctx context.Context, req interface{}) error {
 	}
 
 	handler, err := review1.NewHandler(ctx,
-		review1.WithAppID(_req.AppID),
-		review1.WithDomain(_req.Domain),
-		review1.WithReviewerID(_req.ReviewerID),
-		review1.WithObjectID(_req.ObjectID),
-		review1.WithObjectType(_req.ObjectType),
-		review1.WithTrigger(_req.Trigger),
+		review1.WithAppID(_req.AppID, true),
+		review1.WithDomain(_req.Domain, true),
+		review1.WithReviewerID(_req.ReviewerID, false),
+		review1.WithObjectID(_req.ObjectID, true),
+		review1.WithObjectType(_req.ObjectType, true),
+		review1.WithTrigger(_req.Trigger, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

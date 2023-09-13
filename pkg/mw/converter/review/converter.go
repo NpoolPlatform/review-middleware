@@ -1,6 +1,7 @@
 package review
 
 import (
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 )
@@ -16,12 +17,12 @@ func Ent2Grpc(row *ent.Review) *npool.Review {
 		ReviewerID:    row.ReviewerID.String(),
 		Domain:        row.Domain,
 		ObjectID:      row.ObjectID.String(),
-		TriggerStr:    npool.ReviewTriggerType(npool.ReviewTriggerType_value[row.Trigger]).String(),
-		Trigger:       npool.ReviewTriggerType(npool.ReviewTriggerType_value[row.Trigger]),
-		ObjectTypeStr: npool.ReviewObjectType(npool.ReviewObjectType_value[row.ObjectType]).String(),
-		ObjectType:    npool.ReviewObjectType(npool.ReviewObjectType_value[row.ObjectType]),
-		StateStr:      npool.ReviewState(npool.ReviewState_value[row.State]).String(),
-		State:         npool.ReviewState(npool.ReviewState_value[row.State]),
+		TriggerStr:    types.ReviewTriggerType(types.ReviewTriggerType_value[row.Trigger]).String(),
+		Trigger:       types.ReviewTriggerType(types.ReviewTriggerType_value[row.Trigger]),
+		ObjectTypeStr: types.ReviewObjectType(types.ReviewObjectType_value[row.ObjectType]).String(),
+		ObjectType:    types.ReviewObjectType(types.ReviewObjectType_value[row.ObjectType]),
+		StateStr:      types.ReviewState(types.ReviewState_value[row.State]).String(),
+		State:         types.ReviewState(types.ReviewState_value[row.State]),
 		Message:       row.Message,
 		CreatedAt:     row.CreatedAt,
 		UpdatedAt:     row.UpdatedAt,

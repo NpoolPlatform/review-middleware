@@ -13,6 +13,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	appuserpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
@@ -35,14 +36,14 @@ var (
 	ret = &npool.Review{
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
-		ObjectType:    npool.ReviewObjectType_ObjectKyc,
-		ObjectTypeStr: npool.ReviewObjectType_ObjectKyc.String(),
+		ObjectType:    types.ReviewObjectType_ObjectKyc,
+		ObjectTypeStr: types.ReviewObjectType_ObjectKyc.String(),
 		ObjectID:      uuid.NewString(),
 		ReviewerID:    uuid.NewString(),
-		State:         npool.ReviewState_Wait,
-		StateStr:      npool.ReviewState_Wait.String(),
-		Trigger:       npool.ReviewTriggerType_DefaultTriggerType,
-		TriggerStr:    npool.ReviewTriggerType_DefaultTriggerType.String(),
+		State:         types.ReviewState_Wait,
+		StateStr:      types.ReviewState_Wait.String(),
+		Trigger:       types.ReviewTriggerType_InsufficientGas,
+		TriggerStr:    types.ReviewTriggerType_InsufficientGas.String(),
 		Message:       "",
 	}
 )
@@ -83,6 +84,7 @@ func createReview(t *testing.T) {
 		Domain:     &ret.Domain,
 		ObjectID:   &ret.ObjectID,
 		ObjectType: &ret.ObjectType,
+		Trigger:    &ret.Trigger,
 		ReviewerID: &ret.ReviewerID,
 	})
 	if assert.Nil(t, err) {
@@ -93,8 +95,8 @@ func createReview(t *testing.T) {
 }
 
 func updateReview(t *testing.T) {
-	ret.State = npool.ReviewState_Rejected
-	ret.StateStr = npool.ReviewState_Rejected.String()
+	ret.State = types.ReviewState_Rejected
+	ret.StateStr = types.ReviewState_Rejected.String()
 	ret.Message = uuid.NewString()
 	info, err := UpdateReview(context.Background(), &npool.ReviewReq{
 		ID:      &ret.ID,
@@ -118,7 +120,7 @@ func getReviews(t *testing.T) {
 		},
 		State: &basetypes.Int32Val{
 			Op:    cruder.EQ,
-			Value: npool.ReviewState_value[ret.State.String()],
+			Value: types.ReviewState_value[ret.State.String()],
 		},
 	}
 	infos, _, err := GetReviews(context.Background(), conds, 0, 1)

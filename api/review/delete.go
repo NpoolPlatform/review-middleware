@@ -12,13 +12,20 @@ import (
 
 func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest) (*npool.DeleteReviewResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteReview",
+			"In", in,
+		)
+		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
+	}
 	handler, err := review1.NewHandler(ctx,
-		review1.WithID(req.ID),
+		review1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteReview",
-			"Req", req,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -28,7 +35,7 @@ func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteReview",
-			"Req", req,
+			"In", in,
 			"Error", err,
 		)
 		return &npool.DeleteReviewResponse{}, status.Error(codes.Internal, err.Error())

@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
+
+	"github.com/google/uuid"
 )
 
 func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err error) {
@@ -15,11 +18,21 @@ func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err err
 	if err != nil {
 		return nil, err
 	}
+	if info == nil {
+		return nil, fmt.Errorf("invalid review")
+	}
 	switch info.State {
-	case npool.ReviewState_DefaultReviewState:
-	case npool.ReviewState_Wait:
+	case types.ReviewState_DefaultReviewState:
+	case types.ReviewState_Wait:
 	default:
-		return nil, fmt.Errorf("current state can not be update")
+		return nil, fmt.Errorf("permission denied")
+	}
+
+	if info.ReviewerID != uuid.Nil.String() && h.ReviewerID != nil {
+		return nil, fmt.Errorf("permission denied")
+	}
+	if h.State != nil && *h.State == types.ReviewState_Rejected && (h.Message == nil || *h.Message == "") {
+		return nil, fmt.Errorf("message is empty")
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

@@ -6,13 +6,12 @@ require (
 	bou.ke/monkey v1.0.2
 	entgo.io/ent v0.11.2
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230609030803-0b26c1f95713
-	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20230813055757-23d6ad3123fc
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230609022557-928f8f5a1bbe
+	github.com/NpoolPlatform/basal-middleware v0.0.0-20230908131959-b37594a23afd
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230913101807-3934219c0456
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20230825073905-d23e4d838f99
+	github.com/NpoolPlatform/message v0.0.0-20230913061740-0f175712c044
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
-	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.4.0
 	google.golang.org/grpc v1.55.0

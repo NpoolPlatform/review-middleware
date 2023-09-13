@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
@@ -18,9 +18,9 @@ type Req struct {
 	ReviewerID *uuid.UUID
 	Domain     *string
 	ObjectID   *uuid.UUID
-	Trigger    *npool.ReviewTriggerType
-	ObjectType *npool.ReviewObjectType
-	State      *npool.ReviewState
+	Trigger    *types.ReviewTriggerType
+	ObjectType *types.ReviewObjectType
+	State      *types.ReviewState
 	Message    *string
 	DeletedAt  *uint32
 }
@@ -47,7 +47,7 @@ func CreateSet(c *ent.ReviewCreate, in *Req) *ent.ReviewCreate {
 	if in.ObjectType != nil {
 		c.SetObjectType(in.ObjectType.String())
 	}
-	c.SetState(npool.ReviewState_Wait.String())
+	c.SetState(types.ReviewState_Wait.String())
 	return c
 }
 
@@ -146,7 +146,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 	}
 	if conds.Trigger != nil {
-		trigger, ok := conds.Trigger.Val.(npool.ReviewTriggerType)
+		trigger, ok := conds.Trigger.Val.(types.ReviewTriggerType)
 		if !ok {
 			return nil, fmt.Errorf("invalid trigger")
 		}
@@ -158,7 +158,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 	}
 	if conds.ObjectType != nil {
-		objectType, ok := conds.ObjectType.Val.(npool.ReviewObjectType)
+		objectType, ok := conds.ObjectType.Val.(types.ReviewObjectType)
 		if !ok {
 			return nil, fmt.Errorf("invalid object type")
 		}
@@ -170,7 +170,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 	}
 	if conds.State != nil {
-		state, ok := conds.State.Val.(npool.ReviewState)
+		state, ok := conds.State.Val.(types.ReviewState)
 		if !ok {
 			return nil, fmt.Errorf("invalid state")
 		}

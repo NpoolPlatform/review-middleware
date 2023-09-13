@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
@@ -59,9 +60,9 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		info.Trigger = npool.ReviewTriggerType(npool.ReviewTriggerType_value[info.TriggerStr])
-		info.ObjectType = npool.ReviewObjectType(npool.ReviewObjectType_value[info.ObjectTypeStr])
-		info.State = npool.ReviewState(npool.ReviewState_value[info.StateStr])
+		info.Trigger = types.ReviewTriggerType(types.ReviewTriggerType_value[info.TriggerStr])
+		info.ObjectType = types.ReviewObjectType(types.ReviewObjectType_value[info.ObjectTypeStr])
+		info.State = types.ReviewState(types.ReviewState_value[info.StateStr])
 	}
 }
 

@@ -9,9 +9,10 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
-	constant "github.com/NpoolPlatform/review-middleware/pkg/message/const"
+	servicename "github.com/NpoolPlatform/review-middleware/pkg/servicename"
 )
 
 var timeout = 10 * time.Second
@@ -22,7 +23,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
+	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
 	if err != nil {
 		return nil, fmt.Errorf("fail get review connection: %v", err)
 	}
@@ -66,7 +67,7 @@ func UpdateReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, erro
 	return info.(*npool.Review), nil
 }
 
-func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType npool.ReviewObjectType) (*npool.Review, error) {
+func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType types.ReviewObjectType) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetObjectReview(ctx, &npool.GetObjectReviewRequest{
 			AppID:      appID,
@@ -89,7 +90,7 @@ func GetObjectReviews(
 	ctx context.Context,
 	appID, domain string,
 	objectIDs []string,
-	objectType npool.ReviewObjectType,
+	objectType types.ReviewObjectType,
 ) (
 	[]*npool.Review, error,
 ) {

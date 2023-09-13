@@ -3,10 +3,9 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
-
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 )
 
 // Review holds the schema definition for the Review entity.
@@ -52,15 +51,15 @@ func (Review) Fields() []ent.Field {
 		field.
 			String("trigger").
 			Optional().
-			Default(npool.ReviewTriggerType_DefaultTriggerType.String()),
+			Default(types.ReviewTriggerType_DefaultTriggerType.String()),
 		field.
 			String("object_type").
 			Optional().
-			Default(npool.ReviewObjectType_DefaultObjectType.String()),
+			Default(types.ReviewObjectType_DefaultObjectType.String()),
 		field.
 			String("state").
 			Optional().
-			Default(npool.ReviewState_DefaultReviewState.String()),
+			Default(types.ReviewState_DefaultReviewState.String()),
 		field.
 			String("message").
 			Optional().
