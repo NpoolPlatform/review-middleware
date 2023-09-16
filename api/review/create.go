@@ -26,7 +26,7 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 		review1.WithReviewerID(req.ReviewerID, false),
 		review1.WithObjectID(req.ObjectID, true),
 		review1.WithObjectType(req.ObjectType, true),
-		review1.WithTrigger(req.Trigger, true),
+		review1.WithTrigger(req.Trigger, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
