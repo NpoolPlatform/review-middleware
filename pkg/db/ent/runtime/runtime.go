@@ -78,6 +78,8 @@ func init() {
 	}
 	reviewMixinFields0 := reviewMixin[0].Fields()
 	_ = reviewMixinFields0
+	reviewMixinFields1 := reviewMixin[1].Fields()
+	_ = reviewMixinFields1
 	reviewFields := schema.Review{}.Fields()
 	_ = reviewFields
 	// reviewDescCreatedAt is the schema descriptor for created_at field.
@@ -94,42 +96,42 @@ func init() {
 	reviewDescDeletedAt := reviewMixinFields0[2].Descriptor()
 	// review.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	review.DefaultDeletedAt = reviewDescDeletedAt.Default.(func() uint32)
+	// reviewDescEntID is the schema descriptor for ent_id field.
+	reviewDescEntID := reviewMixinFields1[1].Descriptor()
+	// review.DefaultEntID holds the default value on creation for the ent_id field.
+	review.DefaultEntID = reviewDescEntID.Default.(func() uuid.UUID)
 	// reviewDescAppID is the schema descriptor for app_id field.
-	reviewDescAppID := reviewFields[1].Descriptor()
+	reviewDescAppID := reviewFields[0].Descriptor()
 	// review.DefaultAppID holds the default value on creation for the app_id field.
 	review.DefaultAppID = reviewDescAppID.Default.(func() uuid.UUID)
 	// reviewDescReviewerID is the schema descriptor for reviewer_id field.
-	reviewDescReviewerID := reviewFields[2].Descriptor()
+	reviewDescReviewerID := reviewFields[1].Descriptor()
 	// review.DefaultReviewerID holds the default value on creation for the reviewer_id field.
 	review.DefaultReviewerID = reviewDescReviewerID.Default.(func() uuid.UUID)
 	// reviewDescDomain is the schema descriptor for domain field.
-	reviewDescDomain := reviewFields[3].Descriptor()
+	reviewDescDomain := reviewFields[2].Descriptor()
 	// review.DefaultDomain holds the default value on creation for the domain field.
 	review.DefaultDomain = reviewDescDomain.Default.(string)
 	// reviewDescObjectID is the schema descriptor for object_id field.
-	reviewDescObjectID := reviewFields[4].Descriptor()
+	reviewDescObjectID := reviewFields[3].Descriptor()
 	// review.DefaultObjectID holds the default value on creation for the object_id field.
 	review.DefaultObjectID = reviewDescObjectID.Default.(func() uuid.UUID)
 	// reviewDescTrigger is the schema descriptor for trigger field.
-	reviewDescTrigger := reviewFields[5].Descriptor()
+	reviewDescTrigger := reviewFields[4].Descriptor()
 	// review.DefaultTrigger holds the default value on creation for the trigger field.
 	review.DefaultTrigger = reviewDescTrigger.Default.(string)
 	// reviewDescObjectType is the schema descriptor for object_type field.
-	reviewDescObjectType := reviewFields[6].Descriptor()
+	reviewDescObjectType := reviewFields[5].Descriptor()
 	// review.DefaultObjectType holds the default value on creation for the object_type field.
 	review.DefaultObjectType = reviewDescObjectType.Default.(string)
 	// reviewDescState is the schema descriptor for state field.
-	reviewDescState := reviewFields[7].Descriptor()
+	reviewDescState := reviewFields[6].Descriptor()
 	// review.DefaultState holds the default value on creation for the state field.
 	review.DefaultState = reviewDescState.Default.(string)
 	// reviewDescMessage is the schema descriptor for message field.
-	reviewDescMessage := reviewFields[8].Descriptor()
+	reviewDescMessage := reviewFields[7].Descriptor()
 	// review.DefaultMessage holds the default value on creation for the message field.
 	review.DefaultMessage = reviewDescMessage.Default.(string)
-	// reviewDescID is the schema descriptor for id field.
-	reviewDescID := reviewFields[0].Descriptor()
-	// review.DefaultID holds the default value on creation for the id field.
-	review.DefaultID = reviewDescID.Default.(func() uuid.UUID)
 }
 
 const (

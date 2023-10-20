@@ -41,7 +41,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   review.Table,
 			Columns: review.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: review.FieldID,
 			},
 		},
@@ -50,6 +50,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			review.FieldCreatedAt:  {Type: field.TypeUint32, Column: review.FieldCreatedAt},
 			review.FieldUpdatedAt:  {Type: field.TypeUint32, Column: review.FieldUpdatedAt},
 			review.FieldDeletedAt:  {Type: field.TypeUint32, Column: review.FieldDeletedAt},
+			review.FieldEntID:      {Type: field.TypeUUID, Column: review.FieldEntID},
 			review.FieldAppID:      {Type: field.TypeUUID, Column: review.FieldAppID},
 			review.FieldReviewerID: {Type: field.TypeUUID, Column: review.FieldReviewerID},
 			review.FieldDomain:     {Type: field.TypeString, Column: review.FieldDomain},
@@ -184,8 +185,8 @@ func (f *ReviewFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *ReviewFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *ReviewFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(review.FieldID))
 }
 
@@ -202,6 +203,11 @@ func (f *ReviewFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *ReviewFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(review.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *ReviewFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(review.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.

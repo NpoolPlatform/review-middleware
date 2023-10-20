@@ -40,10 +40,11 @@ var (
 	}
 	// ReviewsColumns holds the columns for the "reviews" table.
 	ReviewsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "reviewer_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "domain", Type: field.TypeString, Nullable: true, Default: ""},
@@ -58,6 +59,13 @@ var (
 		Name:       "reviews",
 		Columns:    ReviewsColumns,
 		PrimaryKey: []*schema.Column{ReviewsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "review_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{ReviewsColumns[4]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{

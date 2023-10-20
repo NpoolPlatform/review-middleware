@@ -929,13 +929,14 @@ type ReviewMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *uint32
 	created_at    *uint32
 	addcreated_at *int32
 	updated_at    *uint32
 	addupdated_at *int32
 	deleted_at    *uint32
 	adddeleted_at *int32
+	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
 	reviewer_id   *uuid.UUID
 	domain        *string
@@ -970,7 +971,7 @@ func newReviewMutation(c config, op Op, opts ...reviewOption) *ReviewMutation {
 }
 
 // withReviewID sets the ID field of the mutation.
-func withReviewID(id uuid.UUID) reviewOption {
+func withReviewID(id uint32) reviewOption {
 	return func(m *ReviewMutation) {
 		var (
 			err   error
@@ -1022,13 +1023,13 @@ func (m ReviewMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Review entities.
-func (m *ReviewMutation) SetID(id uuid.UUID) {
+func (m *ReviewMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ReviewMutation) ID() (id uuid.UUID, exists bool) {
+func (m *ReviewMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1039,12 +1040,12 @@ func (m *ReviewMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ReviewMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *ReviewMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1220,6 +1221,42 @@ func (m *ReviewMutation) AddedDeletedAt() (r int32, exists bool) {
 func (m *ReviewMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *ReviewMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *ReviewMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the Review entity.
+// If the Review object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *ReviewMutation) ResetEntID() {
+	m.ent_id = nil
 }
 
 // SetAppID sets the "app_id" field.
@@ -1633,7 +1670,7 @@ func (m *ReviewMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ReviewMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, review.FieldCreatedAt)
 	}
@@ -1642,6 +1679,9 @@ func (m *ReviewMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, review.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, review.FieldEntID)
 	}
 	if m.app_id != nil {
 		fields = append(fields, review.FieldAppID)
@@ -1681,6 +1721,8 @@ func (m *ReviewMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case review.FieldDeletedAt:
 		return m.DeletedAt()
+	case review.FieldEntID:
+		return m.EntID()
 	case review.FieldAppID:
 		return m.AppID()
 	case review.FieldReviewerID:
@@ -1712,6 +1754,8 @@ func (m *ReviewMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUpdatedAt(ctx)
 	case review.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case review.FieldEntID:
+		return m.OldEntID(ctx)
 	case review.FieldAppID:
 		return m.OldAppID(ctx)
 	case review.FieldReviewerID:
@@ -1757,6 +1801,13 @@ func (m *ReviewMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case review.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
 		return nil
 	case review.FieldAppID:
 		v, ok := value.(uuid.UUID)
@@ -1961,6 +2012,9 @@ func (m *ReviewMutation) ResetField(name string) error {
 		return nil
 	case review.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case review.FieldEntID:
+		m.ResetEntID()
 		return nil
 	case review.FieldAppID:
 		m.ResetAppID()
