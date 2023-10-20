@@ -17,16 +17,18 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 			"CreateReview",
 			"In", in,
 		)
-		return &npool.CreateReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
+		return &npool.CreateReviewResponse{}, status.Error(codes.InvalidArgument, "info is empty")
 	}
-	handler, err := review1.NewHandler(ctx,
+	handler, err := review1.NewHandler(
+		ctx,
 		review1.WithID(req.ID, false),
+		review1.WithEntID(req.EntID, false),
 		review1.WithAppID(req.AppID, true),
 		review1.WithDomain(req.Domain, true),
-		review1.WithReviewerID(req.ReviewerID, false),
 		review1.WithObjectID(req.ObjectID, true),
 		review1.WithObjectType(req.ObjectType, true),
 		review1.WithTrigger(req.Trigger, false),
+		review1.WithReviewerID(req.ReviewerID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

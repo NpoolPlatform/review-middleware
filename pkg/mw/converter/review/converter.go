@@ -12,7 +12,8 @@ func Ent2Grpc(row *ent.Review) *npool.Review {
 	}
 
 	return &npool.Review{
-		ID:            row.ID.String(),
+		ID:            row.ID,
+		EntID:         row.EntID.String(),
 		AppID:         row.AppID.String(),
 		ReviewerID:    row.ReviewerID.String(),
 		Domain:        row.Domain,

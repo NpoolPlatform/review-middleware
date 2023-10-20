@@ -11,7 +11,8 @@ import (
 )
 
 func (s *Server) ExistReviewConds(ctx context.Context, in *npool.ExistReviewCondsRequest) (*npool.ExistReviewCondsResponse, error) {
-	handler, err := review1.NewHandler(ctx,
+	handler, err := review1.NewHandler(
+		ctx,
 		review1.WithConds(in.GetConds()),
 	)
 	if err != nil {

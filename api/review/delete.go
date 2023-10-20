@@ -17,9 +17,10 @@ func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest
 			"DeleteReview",
 			"In", in,
 		)
-		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
+		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, "info is empty")
 	}
-	handler, err := review1.NewHandler(ctx,
+	handler, err := review1.NewHandler(
+		ctx,
 		review1.WithID(req.ID, true),
 	)
 	if err != nil {

@@ -10,22 +10,7 @@ import (
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 )
 
-type createHandler struct {
-	*Handler
-}
-
-func (h *createHandler) validate() error {
-	return nil
-}
-
 func (h *Handler) CreateReview(ctx context.Context) (info *npool.Review, err error) {
-	handler := &createHandler{
-		Handler: h,
-	}
-	if err := handler.validate(); err != nil {
-		return nil, err
-	}
-
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		info, err := crud.CreateSet(
 			cli.Review.Create(),

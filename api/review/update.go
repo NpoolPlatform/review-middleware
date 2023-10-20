@@ -17,9 +17,10 @@ func (s *Server) UpdateReview(ctx context.Context, in *npool.UpdateReviewRequest
 			"UpdateReview",
 			"In", in,
 		)
-		return &npool.UpdateReviewResponse{}, status.Error(codes.InvalidArgument, "invalid argument")
+		return &npool.UpdateReviewResponse{}, status.Error(codes.InvalidArgument, "info is empty")
 	}
-	handler, err := review1.NewHandler(ctx,
+	handler, err := review1.NewHandler(
+		ctx,
 		review1.WithID(req.ID, true),
 		review1.WithReviewerID(req.ReviewerID, false),
 		review1.WithState(req.State, false),

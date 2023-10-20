@@ -31,7 +31,8 @@ func init() {
 }
 
 var (
-	ret = &npool.Review{
+	ret = npool.Review{
+		EntID:         uuid.NewString(),
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
 		ObjectType:    types.ReviewObjectType_ObjectKyc,
@@ -40,14 +41,15 @@ var (
 		ReviewerID:    uuid.NewString(),
 		State:         types.ReviewState_Wait,
 		StateStr:      types.ReviewState_Wait.String(),
-		Trigger:       types.ReviewTriggerType_InsufficientGas,
-		TriggerStr:    types.ReviewTriggerType_InsufficientGas.String(),
+		Trigger:       types.ReviewTriggerType_DefaultTriggerType,
+		TriggerStr:    types.ReviewTriggerType_DefaultTriggerType.String(),
 		Message:       "",
 	}
 )
 
 func createReview(t *testing.T) {
 	info, err := CreateReview(context.Background(), &npool.ReviewReq{
+		EntID:      &ret.EntID,
 		AppID:      &ret.AppID,
 		Domain:     &ret.Domain,
 		ObjectID:   &ret.ObjectID,
@@ -77,44 +79,28 @@ func updateReview(t *testing.T) {
 }
 
 func getReviews(t *testing.T) {
-	conds := &npool.Conds{
-		ID: &basetypes.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.ID,
-		},
-		AppID: &basetypes.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		State: &basetypes.Int32Val{
-			Op:    cruder.EQ,
-			Value: types.ReviewState_value[ret.State.String()],
-		},
-	}
-	infos, _, err := GetReviews(context.Background(), conds, 0, 1)
+	infos, _, err := GetReviews(context.Background(), &npool.Conds{
+		EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		State: &basetypes.Int32Val{Op: cruder.EQ, Value: int32(ret.State)},
+	}, 0, 1)
 	if assert.Nil(t, err) {
 		assert.NotEqual(t, 0, len(infos))
 	}
 }
 
 func getReview(t *testing.T) {
-	info, err := GetReview(context.Background(), ret.ID)
+	info, err := GetReview(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret, info)
+		assert.Equal(t, &ret, info)
 	}
 }
 
 func existReviewConds(t *testing.T) {
 	exist, err := ExistReviewConds(context.Background(), &npool.ExistReviewCondsRequest{
 		Conds: &npool.Conds{
-			AppID: &basetypes.StringVal{
-				Op:    cruder.EQ,
-				Value: ret.AppID,
-			},
-			ID: &basetypes.StringVal{
-				Op:    cruder.EQ,
-				Value: ret.ID,
-			},
+			EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+			AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		},
 	})
 	if assert.Nil(t, err) {
@@ -139,7 +125,7 @@ func getObjectReview(t *testing.T) {
 func deleteReview(t *testing.T) {
 	_, err := DeleteReview(context.Background(), ret.ID)
 	assert.Nil(t, err)
-	info, err := GetReview(context.Background(), ret.ID)
+	info, err := GetReview(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

@@ -136,7 +136,7 @@ func GetReviews(ctx context.Context, conds *npool.Conds, offset, limit int32) ([
 func GetReview(ctx context.Context, id string) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetReview(ctx, &npool.GetReviewRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("fail get review: %v", err)
@@ -149,7 +149,7 @@ func GetReview(ctx context.Context, id string) (*npool.Review, error) {
 	return info.(*npool.Review), nil
 }
 
-func DeleteReview(ctx context.Context, id string) (*npool.Review, error) {
+func DeleteReview(ctx context.Context, id uint32) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteReview(ctx, &npool.DeleteReviewRequest{
 			Info: &npool.ReviewReq{
