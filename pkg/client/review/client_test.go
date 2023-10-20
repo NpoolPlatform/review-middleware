@@ -13,7 +13,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
+	reviewmwpb "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +31,7 @@ func init() {
 }
 
 var (
-	ret = npool.Review{
+	ret = reviewmwpb.Review{
 		EntID:         uuid.NewString(),
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
@@ -48,19 +48,19 @@ var (
 )
 
 func createReview(t *testing.T) {
-	info, err := CreateReview(context.Background(), &npool.ReviewReq{
+	info, err := CreateReview(context.Background(), &reviewmwpb.ReviewReq{
 		EntID:      &ret.EntID,
 		AppID:      &ret.AppID,
 		Domain:     &ret.Domain,
 		ObjectID:   &ret.ObjectID,
 		ObjectType: &ret.ObjectType,
-		Trigger:    &ret.Trigger,
 		ReviewerID: &ret.ReviewerID,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, &ret, info)
 	}
 }
 
@@ -68,24 +68,15 @@ func updateReview(t *testing.T) {
 	ret.State = types.ReviewState_Rejected
 	ret.StateStr = types.ReviewState_Rejected.String()
 	ret.Message = uuid.NewString()
-	info, err := UpdateReview(context.Background(), &npool.ReviewReq{
+
+	info, err := UpdateReview(context.Background(), &reviewmwpb.ReviewReq{
 		ID:      &ret.ID,
 		State:   &ret.State,
 		Message: &ret.Message,
 	})
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret, info)
-	}
-}
-
-func getReviews(t *testing.T) {
-	infos, _, err := GetReviews(context.Background(), &npool.Conds{
-		EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
-		AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		State: &basetypes.Int32Val{Op: cruder.EQ, Value: int32(ret.State)},
-	}, 0, 1)
-	if assert.Nil(t, err) {
-		assert.NotEqual(t, 0, len(infos))
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, &ret, info)
 	}
 }
 
@@ -96,12 +87,29 @@ func getReview(t *testing.T) {
 	}
 }
 
+var (
+	conds = &reviewmwpb.Conds{
+		EntID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		ObjectID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.ObjectID},
+		Domain:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.Domain},
+		Trigger:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.Trigger)},
+		ObjectType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.ObjectType)},
+		State:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.State)},
+	}
+)
+
+func getReviews(t *testing.T) {
+	infos, total, err := GetReviews(context.Background(), conds, 0, 1)
+	if assert.Nil(t, err) {
+		assert.Equal(t, 1, total)
+		assert.Equal(t, &ret, infos[0])
+	}
+}
+
 func existReviewConds(t *testing.T) {
-	exist, err := ExistReviewConds(context.Background(), &npool.ExistReviewCondsRequest{
-		Conds: &npool.Conds{
-			EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
-			AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		},
+	exist, err := ExistReviewConds(context.Background(), &reviewmwpb.ExistReviewCondsRequest{
+		Conds: conds,
 	})
 	if assert.Nil(t, err) {
 		assert.True(t, exist)
@@ -111,20 +119,21 @@ func existReviewConds(t *testing.T) {
 func getObjectReviews(t *testing.T) {
 	infos, err := GetObjectReviews(context.Background(), ret.AppID, ret.Domain, []string{ret.ObjectID}, ret.ObjectType)
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret, infos[0])
+		assert.Equal(t, &ret, infos[0])
 	}
 }
 
 func getObjectReview(t *testing.T) {
 	info, err := GetObjectReview(context.Background(), ret.AppID, ret.Domain, ret.ObjectID, ret.ObjectType)
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret, info)
+		assert.Equal(t, &ret, info)
 	}
 }
 
 func deleteReview(t *testing.T) {
 	_, err := DeleteReview(context.Background(), ret.ID)
 	assert.Nil(t, err)
+
 	info, err := GetReview(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)

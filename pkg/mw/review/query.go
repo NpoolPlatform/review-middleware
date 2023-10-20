@@ -7,12 +7,10 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
-	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
+	reviewcrud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 	entreview "github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
-
-	"github.com/google/uuid"
 )
 
 type queryHandler struct {
@@ -20,12 +18,12 @@ type queryHandler struct {
 	stm   *ent.ReviewSelect
 	infos []*npool.Review
 	total uint32
-	IDs   []uuid.UUID
 }
 
 func (h *queryHandler) selectReviews(stm *ent.ReviewQuery) {
 	h.stm = stm.Select(
 		entreview.FieldID,
+		entreview.FieldEntID,
 		entreview.FieldAppID,
 		entreview.FieldDomain,
 		entreview.FieldReviewerID,
@@ -40,17 +38,33 @@ func (h *queryHandler) selectReviews(stm *ent.ReviewQuery) {
 }
 
 func (h *queryHandler) queryReview(cli *ent.Client) error {
-	if h.ID == nil {
+	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	h.selectReviews(
-		cli.
-			Review.
-			Query().
-			Where(
-				entreview.ID(*h.ID),
-			),
-	)
+	stm := cli.Review.Query().Where(entreview.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entreview.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entreview.EntID(*h.EntID))
+	}
+	h.selectReviews(stm)
+	return nil
+}
+
+func (h *queryHandler) queryReviews(ctx context.Context, cli *ent.Client) error {
+	stm, err := reviewcrud.SetQueryConds(cli.Review.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+
+	h.selectReviews(stm)
 	return nil
 }
 
@@ -80,7 +94,6 @@ func (h *Handler) GetReview(ctx context.Context) (info *npool.Review, err error)
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -88,27 +101,12 @@ func (h *Handler) GetReview(ctx context.Context) (info *npool.Review, err error)
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
+	if len(handler.infos) > 1 {
+		return nil, fmt.Errorf("too many record")
+	}
 
 	handler.formalize()
-
 	return handler.infos[0], nil
-}
-
-func (h *queryHandler) queryCondsByBonds(ctx context.Context, cli *ent.Client) (err error) {
-	stm, err := crud.SetQueryConds(cli.Review.Query(), h.Conds)
-	if err != nil {
-		return err
-	}
-
-	total, err := stm.Count(ctx)
-	if err != nil {
-		return err
-	}
-
-	h.total = uint32(total)
-
-	h.selectReviews(stm)
-	return nil
 }
 
 func (h *Handler) GetReviews(ctx context.Context) ([]*npool.Review, uint32, error) {
@@ -117,11 +115,12 @@ func (h *Handler) GetReviews(ctx context.Context) ([]*npool.Review, uint32, erro
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryCondsByBonds(_ctx, cli); err != nil {
+		if err := handler.queryReviews(_ctx, cli); err != nil {
 			return err
 		}
 		handler.
 			stm.
+			Order(ent.Desc(entreview.FieldUpdatedAt)).
 			Offset(int(h.Offset)).
 			Limit(int(h.Limit))
 		if err := handler.scan(_ctx); err != nil {
