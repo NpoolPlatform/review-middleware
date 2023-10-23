@@ -116,20 +116,6 @@ func existReviewConds(t *testing.T) {
 	}
 }
 
-func getObjectReviews(t *testing.T) {
-	infos, err := GetObjectReviews(context.Background(), ret.AppID, ret.Domain, []string{ret.ObjectID}, ret.ObjectType)
-	if assert.Nil(t, err) {
-		assert.Equal(t, &ret, infos[0])
-	}
-}
-
-func getObjectReview(t *testing.T) {
-	info, err := GetObjectReview(context.Background(), ret.AppID, ret.Domain, ret.ObjectID, ret.ObjectType)
-	if assert.Nil(t, err) {
-		assert.Equal(t, &ret, info)
-	}
-}
-
 func deleteReview(t *testing.T) {
 	_, err := DeleteReview(context.Background(), ret.ID)
 	assert.Nil(t, err)
@@ -158,7 +144,5 @@ func TestClient(t *testing.T) {
 	t.Run("getReviews", getReviews)
 	t.Run("getReview", getReview)
 	t.Run("existReviewConds", existReviewConds)
-	t.Run("getObjectReviews", getObjectReviews)
-	t.Run("getObjectReview", getObjectReview)
 	t.Run("deleteReview", deleteReview)
 }

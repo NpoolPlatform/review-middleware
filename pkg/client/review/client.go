@@ -9,7 +9,6 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 
 	servicename "github.com/NpoolPlatform/review-middleware/pkg/servicename"
@@ -65,51 +64,6 @@ func UpdateReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, erro
 		return nil, fmt.Errorf("fail update review: %v", err)
 	}
 	return info.(*npool.Review), nil
-}
-
-func GetObjectReview(ctx context.Context, appID, domain, objectID string, objectType types.ReviewObjectType) (*npool.Review, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetObjectReview(ctx, &npool.GetObjectReviewRequest{
-			AppID:      appID,
-			Domain:     domain,
-			ObjectID:   objectID,
-			ObjectType: objectType,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("fail get review: %v", err)
-		}
-		return resp.GetInfo(), nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("fail get review: %v", err)
-	}
-	return info.(*npool.Review), nil
-}
-
-func GetObjectReviews(
-	ctx context.Context,
-	appID, domain string,
-	objectIDs []string,
-	objectType types.ReviewObjectType,
-) (
-	[]*npool.Review, error,
-) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetObjectReviews(ctx, &npool.GetObjectReviewsRequest{
-			AppID:      appID,
-			Domain:     domain,
-			ObjectIDs:  objectIDs,
-			ObjectType: objectType,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("fail get review: %v", err)
-		}
-		return resp.GetInfos(), nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("fail get review: %v", err)
-	}
-	return infos.([]*npool.Review), nil
 }
 
 func GetReviews(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Review, uint32, error) {
