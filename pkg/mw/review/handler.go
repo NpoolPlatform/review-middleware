@@ -200,6 +200,12 @@ func WithState(state *reviewtypes.ReviewState, must bool) func(context.Context, 
 
 func WithMessage(message *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if message == nil {
+			if must {
+				return fmt.Errorf("invalid message")
+			}
+			return nil
+		}
 		h.Message = message
 		return nil
 	}
