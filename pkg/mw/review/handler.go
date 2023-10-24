@@ -211,6 +211,7 @@ func WithMessage(message *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
+//nolint
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &crud.Conds{}
@@ -257,6 +258,18 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.State != nil {
 			h.Conds.State = &cruder.Cond{Op: conds.GetState().GetOp(), Val: reviewtypes.ReviewState(conds.GetState().GetValue())}
 		}
+		if conds.EntIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetEntIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.EntIDs = &cruder.Cond{Op: conds.GetEntIDs().GetOp(), Val: ids}
+		}
+
 		return nil
 	}
 }

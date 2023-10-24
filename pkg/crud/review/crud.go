@@ -7,7 +7,7 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
-	reviewent "github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
+	entreview "github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
 
 	"github.com/google/uuid"
 )
@@ -73,6 +73,7 @@ func UpdateSet(u *ent.ReviewUpdateOne, req *Req) *ent.ReviewUpdateOne {
 
 type Conds struct {
 	EntID      *cruder.Cond
+	EntIDs     *cruder.Cond
 	AppID      *cruder.Cond
 	ReviewerID *cruder.Cond
 	Domain     *cruder.Cond
@@ -93,9 +94,23 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(reviewent.EntID(id))
+			q.Where(entreview.EntID(id))
 		default:
 			return nil, fmt.Errorf("invalid entid op field")
+		}
+	}
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entids")
+		}
+		if len(ids) > 0 {
+			switch conds.EntIDs.Op {
+			case cruder.IN:
+				q.Where(entreview.EntIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid entids field")
+			}
 		}
 	}
 	if conds.AppID != nil {
@@ -106,7 +121,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 
 		switch conds.AppID.Op {
 		case cruder.EQ:
-			q.Where(reviewent.AppID(appID))
+			q.Where(entreview.AppID(appID))
 		default:
 			return nil, fmt.Errorf("invalid appid op field")
 		}
@@ -118,7 +133,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.ReviewerID.Op {
 		case cruder.EQ:
-			q.Where(reviewent.ReviewerID(reviewerID))
+			q.Where(entreview.ReviewerID(reviewerID))
 		default:
 			return nil, fmt.Errorf("invalid reviewerid op field")
 		}
@@ -130,7 +145,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.Domain.Op {
 		case cruder.EQ:
-			q.Where(reviewent.Domain(domain))
+			q.Where(entreview.Domain(domain))
 		default:
 			return nil, fmt.Errorf("invalid domain op field")
 		}
@@ -142,7 +157,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.ObjectID.Op {
 		case cruder.EQ:
-			q.Where(reviewent.ObjectID(objectID))
+			q.Where(entreview.ObjectID(objectID))
 		default:
 			return nil, fmt.Errorf("invalid objectid op field")
 		}
@@ -154,7 +169,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.Trigger.Op {
 		case cruder.EQ:
-			q.Where(reviewent.Trigger(trigger.String()))
+			q.Where(entreview.Trigger(trigger.String()))
 		default:
 			return nil, fmt.Errorf("invalid trigger op field")
 		}
@@ -166,7 +181,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.ObjectType.Op {
 		case cruder.EQ:
-			q.Where(reviewent.ObjectType(objectType.String()))
+			q.Where(entreview.ObjectType(objectType.String()))
 		default:
 			return nil, fmt.Errorf("invalid objecttype op field")
 		}
@@ -178,7 +193,7 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 		}
 		switch conds.State.Op {
 		case cruder.EQ:
-			q.Where(reviewent.State(state.String()))
+			q.Where(entreview.State(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid state op field")
 		}
