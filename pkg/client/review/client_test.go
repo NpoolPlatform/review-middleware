@@ -12,7 +12,6 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	reviewtypes "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
-	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	reviewmwpb "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
@@ -36,14 +35,14 @@ var (
 		EntID:         uuid.NewString(),
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
-		ObjectType:    types.ReviewObjectType_ObjectKyc,
-		ObjectTypeStr: types.ReviewObjectType_ObjectKyc.String(),
+		ObjectType:    reviewtypes.ReviewObjectType_ObjectKyc,
+		ObjectTypeStr: reviewtypes.ReviewObjectType_ObjectKyc.String(),
 		ObjectID:      uuid.NewString(),
 		ReviewerID:    uuid.Nil.String(),
-		State:         types.ReviewState_Wait,
-		StateStr:      types.ReviewState_Wait.String(),
-		Trigger:       types.ReviewTriggerType_DefaultTriggerType,
-		TriggerStr:    types.ReviewTriggerType_DefaultTriggerType.String(),
+		State:         reviewtypes.ReviewState_Wait,
+		StateStr:      reviewtypes.ReviewState_Wait.String(),
+		Trigger:       reviewtypes.ReviewTriggerType_DefaultTriggerType,
+		TriggerStr:    reviewtypes.ReviewTriggerType_DefaultTriggerType.String(),
 		Message:       "",
 	}
 )
@@ -65,8 +64,8 @@ func createReview(t *testing.T) {
 }
 
 func updateReview(t *testing.T) {
-	ret.State = types.ReviewState_Rejected
-	ret.StateStr = types.ReviewState_Rejected.String()
+	ret.State = reviewtypes.ReviewState_Rejected
+	ret.StateStr = reviewtypes.ReviewState_Rejected.String()
 	ret.ReviewerID = uuid.NewString()
 	ret.Message = uuid.NewString()
 
