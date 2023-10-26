@@ -13,7 +13,7 @@ import (
 )
 
 type Handler struct {
-	*crud.Req
+	crud.Req
 	Offset    int32
 	Limit     int32
 	Conds     *crud.Conds
@@ -200,11 +200,18 @@ func WithState(state *reviewtypes.ReviewState, must bool) func(context.Context, 
 
 func WithMessage(message *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if message == nil {
+			if must {
+				return fmt.Errorf("invalid message")
+			}
+			return nil
+		}
 		h.Message = message
 		return nil
 	}
 }
 
+//nolint
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &crud.Conds{}
@@ -251,6 +258,18 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.State != nil {
 			h.Conds.State = &cruder.Cond{Op: conds.GetState().GetOp(), Val: reviewtypes.ReviewState(conds.GetState().GetValue())}
 		}
+		if conds.EntIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetEntIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.EntIDs = &cruder.Cond{Op: conds.GetEntIDs().GetOp(), Val: ids}
+		}
+
 		return nil
 	}
 }

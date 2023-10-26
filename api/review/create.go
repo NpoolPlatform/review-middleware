@@ -36,7 +36,7 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 			"In", in,
 			"Error", err,
 		)
-		return &npool.CreateReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateReviewResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.CreateReview(ctx)
@@ -46,7 +46,7 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 			"In", in,
 			"Error", err,
 		)
-		return &npool.CreateReviewResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.CreateReviewResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.CreateReviewResponse{

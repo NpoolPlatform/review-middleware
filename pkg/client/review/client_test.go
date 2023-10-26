@@ -11,7 +11,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
+	reviewtypes "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	reviewmwpb "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
@@ -35,14 +35,14 @@ var (
 		EntID:         uuid.NewString(),
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
-		ObjectType:    types.ReviewObjectType_ObjectKyc,
-		ObjectTypeStr: types.ReviewObjectType_ObjectKyc.String(),
+		ObjectType:    reviewtypes.ReviewObjectType_ObjectKyc,
+		ObjectTypeStr: reviewtypes.ReviewObjectType_ObjectKyc.String(),
 		ObjectID:      uuid.NewString(),
-		ReviewerID:    uuid.NewString(),
-		State:         types.ReviewState_Wait,
-		StateStr:      types.ReviewState_Wait.String(),
-		Trigger:       types.ReviewTriggerType_DefaultTriggerType,
-		TriggerStr:    types.ReviewTriggerType_DefaultTriggerType.String(),
+		ReviewerID:    uuid.Nil.String(),
+		State:         reviewtypes.ReviewState_Wait,
+		StateStr:      reviewtypes.ReviewState_Wait.String(),
+		Trigger:       reviewtypes.ReviewTriggerType_DefaultTriggerType,
+		TriggerStr:    reviewtypes.ReviewTriggerType_DefaultTriggerType.String(),
 		Message:       "",
 	}
 )
@@ -54,7 +54,6 @@ func createReview(t *testing.T) {
 		Domain:     &ret.Domain,
 		ObjectID:   &ret.ObjectID,
 		ObjectType: &ret.ObjectType,
-		ReviewerID: &ret.ReviewerID,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
@@ -65,14 +64,16 @@ func createReview(t *testing.T) {
 }
 
 func updateReview(t *testing.T) {
-	ret.State = types.ReviewState_Rejected
-	ret.StateStr = types.ReviewState_Rejected.String()
+	ret.State = reviewtypes.ReviewState_Rejected
+	ret.StateStr = reviewtypes.ReviewState_Rejected.String()
+	ret.ReviewerID = uuid.NewString()
 	ret.Message = uuid.NewString()
 
 	info, err := UpdateReview(context.Background(), &reviewmwpb.ReviewReq{
-		ID:      &ret.ID,
-		State:   &ret.State,
-		Message: &ret.Message,
+		ID:         &ret.ID,
+		State:      &ret.State,
+		ReviewerID: &ret.ReviewerID,
+		Message:    &ret.Message,
 	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
@@ -93,16 +94,16 @@ var (
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		ObjectID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.ObjectID},
 		Domain:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.Domain},
-		Trigger:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.Trigger)},
-		ObjectType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.ObjectType)},
-		State:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.State)},
+		Trigger:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewTriggerType_DefaultTriggerType)},
+		ObjectType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewObjectType_ObjectKyc)},
+		State:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewState_Rejected)},
 	}
 )
 
 func getReviews(t *testing.T) {
 	infos, total, err := GetReviews(context.Background(), conds, 0, 1)
 	if assert.Nil(t, err) {
-		assert.Equal(t, 1, total)
+		assert.Equal(t, uint32(1), total)
 		assert.Equal(t, &ret, infos[0])
 	}
 }

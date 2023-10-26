@@ -27,14 +27,14 @@ func init() {
 }
 
 var (
-	ret = &reviewmwpb.Review{
+	ret = reviewmwpb.Review{
 		EntID:         uuid.NewString(),
 		AppID:         uuid.NewString(),
 		Domain:        uuid.NewString(),
 		ObjectType:    reviewtypes.ReviewObjectType_ObjectKyc,
 		ObjectTypeStr: reviewtypes.ReviewObjectType_ObjectKyc.String(),
 		ObjectID:      uuid.NewString(),
-		ReviewerID:    uuid.NewString(),
+		ReviewerID:    uuid.Nil.String(),
 		State:         reviewtypes.ReviewState_Wait,
 		StateStr:      reviewtypes.ReviewState_Wait.String(),
 		Trigger:       reviewtypes.ReviewTriggerType_DefaultTriggerType,
@@ -51,7 +51,6 @@ func createReview(t *testing.T) {
 		WithDomain(&ret.Domain, true),
 		WithObjectID(&ret.ObjectID, true),
 		WithObjectType(&ret.ObjectType, true),
-		WithReviewerID(&ret.ReviewerID, false),
 	)
 	assert.Nil(t, err)
 
@@ -66,13 +65,16 @@ func createReview(t *testing.T) {
 
 func updateReview(t *testing.T) {
 	ret.State = reviewtypes.ReviewState_Rejected
+	ret.StateStr = reviewtypes.ReviewState_Rejected.String()
 	ret.Message = uuid.NewString()
+	ret.ReviewerID = uuid.NewString()
 
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithState(&ret.State, false),
 		WithMessage(&ret.Message, false),
+		WithReviewerID(&ret.ReviewerID, false),
 	)
 	assert.Nil(t, err)
 
@@ -102,9 +104,9 @@ var (
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		ObjectID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.ObjectID},
 		Domain:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.Domain},
-		Trigger:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.Trigger)},
-		ObjectType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.ObjectType)},
-		State:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.State)},
+		Trigger:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewTriggerType_DefaultTriggerType)},
+		ObjectType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewObjectType_ObjectKyc)},
+		State:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(reviewtypes.ReviewState_Rejected)},
 	}
 )
 
@@ -112,12 +114,14 @@ func getReviews(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithConds(conds),
+		WithOffset(0),
+		WithLimit(1),
 	)
 	assert.Nil(t, err)
 
 	infos, total, err := handler.GetReviews(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, total, 1)
+		assert.Equal(t, uint32(1), total)
 		assert.Equal(t, &ret, infos[0])
 	}
 }

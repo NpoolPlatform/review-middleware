@@ -29,7 +29,7 @@ func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest
 			"In", in,
 			"Error", err,
 		)
-		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteReviewResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.DeleteReview(ctx)
@@ -39,7 +39,7 @@ func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest
 			"In", in,
 			"Error", err,
 		)
-		return &npool.DeleteReviewResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.DeleteReviewResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.DeleteReviewResponse{
