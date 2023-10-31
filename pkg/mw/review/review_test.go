@@ -7,18 +7,14 @@ import (
 	"strconv"
 	"testing"
 
-	"bou.ke/monkey"
-	"github.com/NpoolPlatform/go-service-framework/pkg/config"
-	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	reviewtypes "github.com/NpoolPlatform/message/npool/basetypes/review/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	reviewmwpb "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
-	"github.com/NpoolPlatform/review-middleware/pkg/testinit"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	testinit "github.com/NpoolPlatform/review-middleware/pkg/testinit"
 )
 
 func init() {
@@ -48,13 +44,17 @@ var (
 )
 
 func createReview(t *testing.T) {
-	info, err := CreateReview(context.Background(), &reviewmwpb.ReviewReq{
-		EntID:      &ret.EntID,
-		AppID:      &ret.AppID,
-		Domain:     &ret.Domain,
-		ObjectID:   &ret.ObjectID,
-		ObjectType: &ret.ObjectType,
-	})
+	handler, err := NewHandler(
+		context.Background(),
+		WithEntID(&ret.EntID, false),
+		WithAppID(&ret.AppID, true),
+		WithDomain(&ret.Domain, true),
+		WithObjectID(&ret.ObjectID, true),
+		WithObjectType(&ret.ObjectType, true),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.CreateReview(context.Background())
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
@@ -66,15 +66,19 @@ func createReview(t *testing.T) {
 func updateReview(t *testing.T) {
 	ret.State = reviewtypes.ReviewState_Rejected
 	ret.StateStr = reviewtypes.ReviewState_Rejected.String()
-	ret.ReviewerID = uuid.NewString()
 	ret.Message = uuid.NewString()
+	ret.ReviewerID = uuid.NewString()
 
-	info, err := UpdateReview(context.Background(), &reviewmwpb.ReviewReq{
-		ID:         &ret.ID,
-		State:      &ret.State,
-		ReviewerID: &ret.ReviewerID,
-		Message:    &ret.Message,
-	})
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID, true),
+		WithState(&ret.State, false),
+		WithMessage(&ret.Message, false),
+		WithReviewerID(&ret.ReviewerID, false),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.UpdateReview(context.Background())
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &ret, info)
@@ -82,7 +86,13 @@ func updateReview(t *testing.T) {
 }
 
 func getReview(t *testing.T) {
-	info, err := GetReview(context.Background(), ret.EntID)
+	handler, err := NewHandler(
+		context.Background(),
+		WithEntID(&ret.EntID, true),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.GetReview(context.Background())
 	if assert.Nil(t, err) {
 		assert.Equal(t, &ret, info)
 	}
@@ -101,7 +111,15 @@ var (
 )
 
 func getReviews(t *testing.T) {
-	infos, total, err := GetReviews(context.Background(), conds, 0, 1)
+	handler, err := NewHandler(
+		context.Background(),
+		WithConds(conds),
+		WithOffset(0),
+		WithLimit(1),
+	)
+	assert.Nil(t, err)
+
+	infos, total, err := handler.GetReviews(context.Background())
 	if assert.Nil(t, err) {
 		assert.Equal(t, uint32(1), total)
 		assert.Equal(t, &ret, infos[0])
@@ -109,41 +127,44 @@ func getReviews(t *testing.T) {
 }
 
 func existReviewConds(t *testing.T) {
-	exist, err := ExistReviewConds(context.Background(), &reviewmwpb.ExistReviewCondsRequest{
-		Conds: conds,
-	})
+	handler, err := NewHandler(
+		context.Background(),
+		WithConds(conds),
+	)
+	assert.Nil(t, err)
+
+	exist, err := handler.ExistReviewConds(context.Background())
 	if assert.Nil(t, err) {
 		assert.True(t, exist)
 	}
 }
 
 func deleteReview(t *testing.T) {
-	_, err := DeleteReview(context.Background(), ret.ID)
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID, true),
+	)
 	assert.Nil(t, err)
 
-	info, err := GetReview(context.Background(), ret.EntID)
+	info, err := handler.DeleteReview(context.Background())
+	if assert.Nil(t, err) {
+		assert.Equal(t, &ret, info)
+	}
+
+	info, err = handler.GetReview(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
 
-func TestClient(t *testing.T) {
+func TestReview(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
-	// Here won't pass test due to we always test with localhost
-	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
 
-	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
-		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	})
-	monkey.Patch(grpc2.GetGRPCConnV1, func(service string, recvMsgBytes int, tags ...string) (*grpc.ClientConn, error) {
-		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	})
-
-	t.Run("createReview", createReview)
+	t.Run("createReviw", createReview)
 	t.Run("updateReview", updateReview)
-	t.Run("getReviews", getReviews)
 	t.Run("getReview", getReview)
+	t.Run("getReviews", getReviews)
 	t.Run("existReviewConds", existReviewConds)
 	t.Run("deleteReview", deleteReview)
 }

@@ -9,7 +9,6 @@ import (
 	"log"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent/migrate"
-	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent/review"
@@ -171,7 +170,7 @@ func (c *PubsubMessageClient) UpdateOne(pm *PubsubMessage) *PubsubMessageUpdateO
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PubsubMessageClient) UpdateOneID(id uuid.UUID) *PubsubMessageUpdateOne {
+func (c *PubsubMessageClient) UpdateOneID(id uint32) *PubsubMessageUpdateOne {
 	mutation := newPubsubMessageMutation(c.config, OpUpdateOne, withPubsubMessageID(id))
 	return &PubsubMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -188,7 +187,7 @@ func (c *PubsubMessageClient) DeleteOne(pm *PubsubMessage) *PubsubMessageDeleteO
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *PubsubMessageClient) DeleteOneID(id uuid.UUID) *PubsubMessageDeleteOne {
+func (c *PubsubMessageClient) DeleteOneID(id uint32) *PubsubMessageDeleteOne {
 	builder := c.Delete().Where(pubsubmessage.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -203,12 +202,12 @@ func (c *PubsubMessageClient) Query() *PubsubMessageQuery {
 }
 
 // Get returns a PubsubMessage entity by its id.
-func (c *PubsubMessageClient) Get(ctx context.Context, id uuid.UUID) (*PubsubMessage, error) {
+func (c *PubsubMessageClient) Get(ctx context.Context, id uint32) (*PubsubMessage, error) {
 	return c.Query().Where(pubsubmessage.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PubsubMessageClient) GetX(ctx context.Context, id uuid.UUID) *PubsubMessage {
+func (c *PubsubMessageClient) GetX(ctx context.Context, id uint32) *PubsubMessage {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -262,7 +261,7 @@ func (c *ReviewClient) UpdateOne(r *Review) *ReviewUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ReviewClient) UpdateOneID(id uuid.UUID) *ReviewUpdateOne {
+func (c *ReviewClient) UpdateOneID(id uint32) *ReviewUpdateOne {
 	mutation := newReviewMutation(c.config, OpUpdateOne, withReviewID(id))
 	return &ReviewUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -279,7 +278,7 @@ func (c *ReviewClient) DeleteOne(r *Review) *ReviewDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *ReviewClient) DeleteOneID(id uuid.UUID) *ReviewDeleteOne {
+func (c *ReviewClient) DeleteOneID(id uint32) *ReviewDeleteOne {
 	builder := c.Delete().Where(review.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -294,12 +293,12 @@ func (c *ReviewClient) Query() *ReviewQuery {
 }
 
 // Get returns a Review entity by its id.
-func (c *ReviewClient) Get(ctx context.Context, id uuid.UUID) (*Review, error) {
+func (c *ReviewClient) Get(ctx context.Context, id uint32) (*Review, error) {
 	return c.Query().Where(review.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ReviewClient) GetX(ctx context.Context, id uuid.UUID) *Review {
+func (c *ReviewClient) GetX(ctx context.Context, id uint32) *Review {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

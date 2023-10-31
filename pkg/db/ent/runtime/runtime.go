@@ -30,6 +30,8 @@ func init() {
 	}
 	pubsubmessageMixinFields0 := pubsubmessageMixin[0].Fields()
 	_ = pubsubmessageMixinFields0
+	pubsubmessageMixinFields1 := pubsubmessageMixin[1].Fields()
+	_ = pubsubmessageMixinFields1
 	pubsubmessageFields := schema.PubsubMessage{}.Fields()
 	_ = pubsubmessageFields
 	// pubsubmessageDescCreatedAt is the schema descriptor for created_at field.
@@ -46,24 +48,28 @@ func init() {
 	pubsubmessageDescDeletedAt := pubsubmessageMixinFields0[2].Descriptor()
 	// pubsubmessage.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	pubsubmessage.DefaultDeletedAt = pubsubmessageDescDeletedAt.Default.(func() uint32)
+	// pubsubmessageDescEntID is the schema descriptor for ent_id field.
+	pubsubmessageDescEntID := pubsubmessageMixinFields1[1].Descriptor()
+	// pubsubmessage.DefaultEntID holds the default value on creation for the ent_id field.
+	pubsubmessage.DefaultEntID = pubsubmessageDescEntID.Default.(func() uuid.UUID)
 	// pubsubmessageDescMessageID is the schema descriptor for message_id field.
-	pubsubmessageDescMessageID := pubsubmessageFields[1].Descriptor()
+	pubsubmessageDescMessageID := pubsubmessageFields[0].Descriptor()
 	// pubsubmessage.DefaultMessageID holds the default value on creation for the message_id field.
 	pubsubmessage.DefaultMessageID = pubsubmessageDescMessageID.Default.(string)
 	// pubsubmessageDescState is the schema descriptor for state field.
-	pubsubmessageDescState := pubsubmessageFields[2].Descriptor()
+	pubsubmessageDescState := pubsubmessageFields[1].Descriptor()
 	// pubsubmessage.DefaultState holds the default value on creation for the state field.
 	pubsubmessage.DefaultState = pubsubmessageDescState.Default.(string)
 	// pubsubmessageDescRespToID is the schema descriptor for resp_to_id field.
-	pubsubmessageDescRespToID := pubsubmessageFields[3].Descriptor()
+	pubsubmessageDescRespToID := pubsubmessageFields[2].Descriptor()
 	// pubsubmessage.DefaultRespToID holds the default value on creation for the resp_to_id field.
 	pubsubmessage.DefaultRespToID = pubsubmessageDescRespToID.Default.(func() uuid.UUID)
 	// pubsubmessageDescUndoID is the schema descriptor for undo_id field.
-	pubsubmessageDescUndoID := pubsubmessageFields[4].Descriptor()
+	pubsubmessageDescUndoID := pubsubmessageFields[3].Descriptor()
 	// pubsubmessage.DefaultUndoID holds the default value on creation for the undo_id field.
 	pubsubmessage.DefaultUndoID = pubsubmessageDescUndoID.Default.(func() uuid.UUID)
 	// pubsubmessageDescArguments is the schema descriptor for arguments field.
-	pubsubmessageDescArguments := pubsubmessageFields[5].Descriptor()
+	pubsubmessageDescArguments := pubsubmessageFields[4].Descriptor()
 	// pubsubmessage.DefaultArguments holds the default value on creation for the arguments field.
 	pubsubmessage.DefaultArguments = pubsubmessageDescArguments.Default.(string)
 	reviewMixin := schema.Review{}.Mixin()
@@ -78,6 +84,8 @@ func init() {
 	}
 	reviewMixinFields0 := reviewMixin[0].Fields()
 	_ = reviewMixinFields0
+	reviewMixinFields1 := reviewMixin[1].Fields()
+	_ = reviewMixinFields1
 	reviewFields := schema.Review{}.Fields()
 	_ = reviewFields
 	// reviewDescCreatedAt is the schema descriptor for created_at field.
@@ -94,42 +102,42 @@ func init() {
 	reviewDescDeletedAt := reviewMixinFields0[2].Descriptor()
 	// review.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	review.DefaultDeletedAt = reviewDescDeletedAt.Default.(func() uint32)
+	// reviewDescEntID is the schema descriptor for ent_id field.
+	reviewDescEntID := reviewMixinFields1[1].Descriptor()
+	// review.DefaultEntID holds the default value on creation for the ent_id field.
+	review.DefaultEntID = reviewDescEntID.Default.(func() uuid.UUID)
 	// reviewDescAppID is the schema descriptor for app_id field.
-	reviewDescAppID := reviewFields[1].Descriptor()
+	reviewDescAppID := reviewFields[0].Descriptor()
 	// review.DefaultAppID holds the default value on creation for the app_id field.
 	review.DefaultAppID = reviewDescAppID.Default.(func() uuid.UUID)
 	// reviewDescReviewerID is the schema descriptor for reviewer_id field.
-	reviewDescReviewerID := reviewFields[2].Descriptor()
+	reviewDescReviewerID := reviewFields[1].Descriptor()
 	// review.DefaultReviewerID holds the default value on creation for the reviewer_id field.
 	review.DefaultReviewerID = reviewDescReviewerID.Default.(func() uuid.UUID)
 	// reviewDescDomain is the schema descriptor for domain field.
-	reviewDescDomain := reviewFields[3].Descriptor()
+	reviewDescDomain := reviewFields[2].Descriptor()
 	// review.DefaultDomain holds the default value on creation for the domain field.
 	review.DefaultDomain = reviewDescDomain.Default.(string)
 	// reviewDescObjectID is the schema descriptor for object_id field.
-	reviewDescObjectID := reviewFields[4].Descriptor()
+	reviewDescObjectID := reviewFields[3].Descriptor()
 	// review.DefaultObjectID holds the default value on creation for the object_id field.
 	review.DefaultObjectID = reviewDescObjectID.Default.(func() uuid.UUID)
 	// reviewDescTrigger is the schema descriptor for trigger field.
-	reviewDescTrigger := reviewFields[5].Descriptor()
+	reviewDescTrigger := reviewFields[4].Descriptor()
 	// review.DefaultTrigger holds the default value on creation for the trigger field.
 	review.DefaultTrigger = reviewDescTrigger.Default.(string)
 	// reviewDescObjectType is the schema descriptor for object_type field.
-	reviewDescObjectType := reviewFields[6].Descriptor()
+	reviewDescObjectType := reviewFields[5].Descriptor()
 	// review.DefaultObjectType holds the default value on creation for the object_type field.
 	review.DefaultObjectType = reviewDescObjectType.Default.(string)
 	// reviewDescState is the schema descriptor for state field.
-	reviewDescState := reviewFields[7].Descriptor()
+	reviewDescState := reviewFields[6].Descriptor()
 	// review.DefaultState holds the default value on creation for the state field.
 	review.DefaultState = reviewDescState.Default.(string)
 	// reviewDescMessage is the schema descriptor for message field.
-	reviewDescMessage := reviewFields[8].Descriptor()
+	reviewDescMessage := reviewFields[7].Descriptor()
 	// review.DefaultMessage holds the default value on creation for the message field.
 	review.DefaultMessage = reviewDescMessage.Default.(string)
-	// reviewDescID is the schema descriptor for id field.
-	reviewDescID := reviewFields[0].Descriptor()
-	// review.DefaultID holds the default value on creation for the id field.
-	review.DefaultID = reviewDescID.Default.(func() uuid.UUID)
 }
 
 const (

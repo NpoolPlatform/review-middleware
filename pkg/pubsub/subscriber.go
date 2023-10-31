@@ -29,7 +29,7 @@ func finish(ctx context.Context, msg *pubsub.Msg, err error) error {
 		c := cli.
 			PubsubMessage.
 			Create().
-			SetID(msg.UID).
+			SetEntID(msg.UID).
 			SetMessageID(msg.MID).
 			SetArguments(msg.Body).
 			SetState(state.String())
@@ -76,7 +76,7 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 			PubsubMessage.
 			Query().
 			Where(
-				entpubsubmsg.ID(uid),
+				entpubsubmsg.EntID(uid),
 			).
 			Only(_ctx)
 		return err

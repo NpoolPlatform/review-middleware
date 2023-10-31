@@ -84,6 +84,20 @@ func (ru *ReviewUpdate) AddDeletedAt(u int32) *ReviewUpdate {
 	return ru
 }
 
+// SetEntID sets the "ent_id" field.
+func (ru *ReviewUpdate) SetEntID(u uuid.UUID) *ReviewUpdate {
+	ru.mutation.SetEntID(u)
+	return ru
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ru *ReviewUpdate) SetNillableEntID(u *uuid.UUID) *ReviewUpdate {
+	if u != nil {
+		ru.SetEntID(*u)
+	}
+	return ru
+}
+
 // SetAppID sets the "app_id" field.
 func (ru *ReviewUpdate) SetAppID(u uuid.UUID) *ReviewUpdate {
 	ru.mutation.SetAppID(u)
@@ -330,7 +344,7 @@ func (ru *ReviewUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   review.Table,
 			Columns: review.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: review.FieldID,
 			},
 		},
@@ -382,6 +396,13 @@ func (ru *ReviewUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: review.FieldDeletedAt,
+		})
+	}
+	if value, ok := ru.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: review.FieldEntID,
 		})
 	}
 	if value, ok := ru.mutation.AppID(); ok {
@@ -561,6 +582,20 @@ func (ruo *ReviewUpdateOne) SetNillableDeletedAt(u *uint32) *ReviewUpdateOne {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (ruo *ReviewUpdateOne) AddDeletedAt(u int32) *ReviewUpdateOne {
 	ruo.mutation.AddDeletedAt(u)
+	return ruo
+}
+
+// SetEntID sets the "ent_id" field.
+func (ruo *ReviewUpdateOne) SetEntID(u uuid.UUID) *ReviewUpdateOne {
+	ruo.mutation.SetEntID(u)
+	return ruo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ruo *ReviewUpdateOne) SetNillableEntID(u *uuid.UUID) *ReviewUpdateOne {
+	if u != nil {
+		ruo.SetEntID(*u)
+	}
 	return ruo
 }
 
@@ -823,7 +858,7 @@ func (ruo *ReviewUpdateOne) sqlSave(ctx context.Context) (_node *Review, err err
 			Table:   review.Table,
 			Columns: review.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: review.FieldID,
 			},
 		},
@@ -892,6 +927,13 @@ func (ruo *ReviewUpdateOne) sqlSave(ctx context.Context) (_node *Review, err err
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: review.FieldDeletedAt,
+		})
+	}
+	if value, ok := ruo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: review.FieldEntID,
 		})
 	}
 	if value, ok := ruo.mutation.AppID(); ok {

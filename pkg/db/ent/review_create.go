@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -61,6 +60,20 @@ func (rc *ReviewCreate) SetDeletedAt(u uint32) *ReviewCreate {
 func (rc *ReviewCreate) SetNillableDeletedAt(u *uint32) *ReviewCreate {
 	if u != nil {
 		rc.SetDeletedAt(*u)
+	}
+	return rc
+}
+
+// SetEntID sets the "ent_id" field.
+func (rc *ReviewCreate) SetEntID(u uuid.UUID) *ReviewCreate {
+	rc.mutation.SetEntID(u)
+	return rc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (rc *ReviewCreate) SetNillableEntID(u *uuid.UUID) *ReviewCreate {
+	if u != nil {
+		rc.SetEntID(*u)
 	}
 	return rc
 }
@@ -178,16 +191,8 @@ func (rc *ReviewCreate) SetNillableMessage(s *string) *ReviewCreate {
 }
 
 // SetID sets the "id" field.
-func (rc *ReviewCreate) SetID(u uuid.UUID) *ReviewCreate {
+func (rc *ReviewCreate) SetID(u uint32) *ReviewCreate {
 	rc.mutation.SetID(u)
-	return rc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (rc *ReviewCreate) SetNillableID(u *uuid.UUID) *ReviewCreate {
-	if u != nil {
-		rc.SetID(*u)
-	}
 	return rc
 }
 
@@ -291,6 +296,13 @@ func (rc *ReviewCreate) defaults() error {
 		v := review.DefaultDeletedAt()
 		rc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := rc.mutation.EntID(); !ok {
+		if review.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized review.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := review.DefaultEntID()
+		rc.mutation.SetEntID(v)
+	}
 	if _, ok := rc.mutation.AppID(); !ok {
 		if review.DefaultAppID == nil {
 			return fmt.Errorf("ent: uninitialized review.DefaultAppID (forgotten import ent/runtime?)")
@@ -332,13 +344,6 @@ func (rc *ReviewCreate) defaults() error {
 		v := review.DefaultMessage
 		rc.mutation.SetMessage(v)
 	}
-	if _, ok := rc.mutation.ID(); !ok {
-		if review.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized review.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := review.DefaultID()
-		rc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -353,6 +358,9 @@ func (rc *ReviewCreate) check() error {
 	if _, ok := rc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Review.deleted_at"`)}
 	}
+	if _, ok := rc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Review.ent_id"`)}
+	}
 	return nil
 }
 
@@ -364,12 +372,9 @@ func (rc *ReviewCreate) sqlSave(ctx context.Context) (*Review, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -380,7 +385,7 @@ func (rc *ReviewCreate) createSpec() (*Review, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: review.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: review.FieldID,
 			},
 		}
@@ -388,7 +393,7 @@ func (rc *ReviewCreate) createSpec() (*Review, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = rc.conflict
 	if id, ok := rc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -413,6 +418,14 @@ func (rc *ReviewCreate) createSpec() (*Review, *sqlgraph.CreateSpec) {
 			Column: review.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := rc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: review.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := rc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -583,6 +596,18 @@ func (u *ReviewUpsert) UpdateDeletedAt() *ReviewUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *ReviewUpsert) AddDeletedAt(v uint32) *ReviewUpsert {
 	u.Add(review.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *ReviewUpsert) SetEntID(v uuid.UUID) *ReviewUpsert {
+	u.Set(review.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *ReviewUpsert) UpdateEntID() *ReviewUpsert {
+	u.SetExcluded(review.FieldEntID)
 	return u
 }
 
@@ -843,6 +868,20 @@ func (u *ReviewUpsertOne) UpdateDeletedAt() *ReviewUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *ReviewUpsertOne) SetEntID(v uuid.UUID) *ReviewUpsertOne {
+	return u.Update(func(s *ReviewUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *ReviewUpsertOne) UpdateEntID() *ReviewUpsertOne {
+	return u.Update(func(s *ReviewUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *ReviewUpsertOne) SetAppID(v uuid.UUID) *ReviewUpsertOne {
 	return u.Update(func(s *ReviewUpsert) {
@@ -1027,12 +1066,7 @@ func (u *ReviewUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ReviewUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: ReviewUpsertOne.ID is not supported by MySQL driver. Use ReviewUpsertOne.Exec instead")
-	}
+func (u *ReviewUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1041,7 +1075,7 @@ func (u *ReviewUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ReviewUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *ReviewUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1092,6 +1126,10 @@ func (rcb *ReviewCreateBulk) Save(ctx context.Context) ([]*Review, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1287,6 +1325,20 @@ func (u *ReviewUpsertBulk) AddDeletedAt(v uint32) *ReviewUpsertBulk {
 func (u *ReviewUpsertBulk) UpdateDeletedAt() *ReviewUpsertBulk {
 	return u.Update(func(s *ReviewUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *ReviewUpsertBulk) SetEntID(v uuid.UUID) *ReviewUpsertBulk {
+	return u.Update(func(s *ReviewUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *ReviewUpsertBulk) UpdateEntID() *ReviewUpsertBulk {
+	return u.Update(func(s *ReviewUpsert) {
+		s.UpdateEntID()
 	})
 }
 

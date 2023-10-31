@@ -5,7 +5,7 @@ import (
 	"time"
 
 	npool "github.com/NpoolPlatform/message/npool/review/mw/v2/review"
-	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
+	reviewcrud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
 	"github.com/NpoolPlatform/review-middleware/pkg/db"
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 )
@@ -21,9 +21,9 @@ func (h *Handler) DeleteReview(ctx context.Context) (info *npool.Review, err err
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		now := uint32(time.Now().Unix())
-		if _, err := crud.UpdateSet(
+		if _, err := reviewcrud.UpdateSet(
 			cli.Review.UpdateOneID(*h.ID),
-			&crud.Req{
+			&reviewcrud.Req{
 				DeletedAt: &now,
 			},
 		).Save(_ctx); err != nil {

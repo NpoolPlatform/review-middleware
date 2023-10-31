@@ -10,10 +10,11 @@ import (
 var (
 	// PubsubMessagesColumns holds the columns for the "pubsub_messages" table.
 	PubsubMessagesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "message_id", Type: field.TypeString, Nullable: true, Default: "DefaultMsgID"},
 		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultMsgState"},
 		{Name: "resp_to_id", Type: field.TypeUUID, Nullable: true},
@@ -27,23 +28,29 @@ var (
 		PrimaryKey: []*schema.Column{PubsubMessagesColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "pubsubmessage_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PubsubMessagesColumns[4]},
+			},
+			{
 				Name:    "pubsubmessage_state_resp_to_id",
 				Unique:  false,
-				Columns: []*schema.Column{PubsubMessagesColumns[5], PubsubMessagesColumns[6]},
+				Columns: []*schema.Column{PubsubMessagesColumns[6], PubsubMessagesColumns[7]},
 			},
 			{
 				Name:    "pubsubmessage_state_undo_id",
 				Unique:  false,
-				Columns: []*schema.Column{PubsubMessagesColumns[5], PubsubMessagesColumns[7]},
+				Columns: []*schema.Column{PubsubMessagesColumns[6], PubsubMessagesColumns[8]},
 			},
 		},
 	}
 	// ReviewsColumns holds the columns for the "reviews" table.
 	ReviewsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "reviewer_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "domain", Type: field.TypeString, Nullable: true, Default: ""},
@@ -58,6 +65,13 @@ var (
 		Name:       "reviews",
 		Columns:    ReviewsColumns,
 		PrimaryKey: []*schema.Column{ReviewsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "review_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{ReviewsColumns[4]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{

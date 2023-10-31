@@ -15,13 +15,15 @@ import (
 type Review struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// ReviewerID holds the value of the "reviewer_id" field.
@@ -45,11 +47,11 @@ func (*Review) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case review.FieldCreatedAt, review.FieldUpdatedAt, review.FieldDeletedAt:
+		case review.FieldID, review.FieldCreatedAt, review.FieldUpdatedAt, review.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case review.FieldDomain, review.FieldTrigger, review.FieldObjectType, review.FieldState, review.FieldMessage:
 			values[i] = new(sql.NullString)
-		case review.FieldID, review.FieldAppID, review.FieldReviewerID, review.FieldObjectID:
+		case review.FieldEntID, review.FieldAppID, review.FieldReviewerID, review.FieldObjectID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Review", columns[i])
@@ -67,11 +69,11 @@ func (r *Review) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case review.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				r.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			r.ID = uint32(value.Int64)
 		case review.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -89,6 +91,12 @@ func (r *Review) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				r.DeletedAt = uint32(value.Int64)
+			}
+		case review.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				r.EntID = *value
 			}
 		case review.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -174,6 +182,9 @@ func (r *Review) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", r.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", r.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", r.AppID))

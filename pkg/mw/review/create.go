@@ -8,29 +8,21 @@ import (
 	"github.com/NpoolPlatform/review-middleware/pkg/db/ent"
 
 	crud "github.com/NpoolPlatform/review-middleware/pkg/crud/review"
+	"github.com/google/uuid"
 )
 
-type createHandler struct {
-	*Handler
-}
-
-func (h *createHandler) validate() error {
-	return nil
-}
-
 func (h *Handler) CreateReview(ctx context.Context) (info *npool.Review, err error) {
-	handler := &createHandler{
-		Handler: h,
-	}
-	if err := handler.validate(); err != nil {
-		return nil, err
+	id := uuid.New()
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err := crud.CreateSet(
+		if _, err := crud.CreateSet(
 			cli.Review.Create(),
 			&crud.Req{
 				ID:         h.ID,
+				EntID:      h.EntID,
 				AppID:      h.AppID,
 				ReviewerID: h.ReviewerID,
 				Domain:     h.Domain,
@@ -38,12 +30,9 @@ func (h *Handler) CreateReview(ctx context.Context) (info *npool.Review, err err
 				ObjectType: h.ObjectType,
 				Trigger:    h.Trigger,
 			},
-		).Save(_ctx)
-		if err != nil {
+		).Save(_ctx); err != nil {
 			return err
 		}
-
-		h.ID = &info.ID
 		return nil
 	})
 	if err != nil {

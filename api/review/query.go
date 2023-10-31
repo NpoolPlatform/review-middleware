@@ -11,7 +11,8 @@ import (
 )
 
 func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*npool.GetReviewsResponse, error) {
-	handler, err := review1.NewHandler(ctx,
+	handler, err := review1.NewHandler(
+		ctx,
 		review1.WithConds(in.GetConds()),
 		review1.WithOffset(in.Offset),
 		review1.WithLimit(in.Limit),
@@ -42,8 +43,9 @@ func (s *Server) GetReviews(ctx context.Context, in *npool.GetReviewsRequest) (*
 }
 
 func (s *Server) GetReview(ctx context.Context, in *npool.GetReviewRequest) (*npool.GetReviewResponse, error) {
-	handler, err := review1.NewHandler(ctx,
-		review1.WithID(&in.ID, true),
+	handler, err := review1.NewHandler(
+		ctx,
+		review1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

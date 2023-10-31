@@ -13,26 +13,33 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err error) {
-	info, err = h.GetReview(ctx)
+func (h *Handler) validateReview(ctx context.Context) error {
+	info, err := h.GetReview(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, fmt.Errorf("invalid review")
+		return fmt.Errorf("review not found")
 	}
 	switch info.State {
 	case types.ReviewState_DefaultReviewState:
 	case types.ReviewState_Wait:
 	default:
-		return nil, fmt.Errorf("permission denied")
+		return fmt.Errorf("current review state can not be updated")
 	}
 
 	if info.ReviewerID != uuid.Nil.String() && h.ReviewerID != nil {
-		return nil, fmt.Errorf("permission denied")
+		return fmt.Errorf("permission denied")
 	}
-	if h.State != nil && *h.State == types.ReviewState_Rejected && (h.Message == nil || *h.Message == "") {
-		return nil, fmt.Errorf("message is empty")
+	if h.State != nil && *h.State == types.ReviewState_Rejected && h.Message == nil {
+		return fmt.Errorf("message is empty")
+	}
+	return nil
+}
+
+func (h *Handler) UpdateReview(ctx context.Context) (info *npool.Review, err error) {
+	if err := h.validateReview(ctx); err != nil {
+		return nil, err
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
