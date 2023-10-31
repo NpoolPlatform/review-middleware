@@ -21,7 +21,6 @@ func (s *Server) CreateReview(ctx context.Context, in *npool.CreateReviewRequest
 	}
 	handler, err := review1.NewHandler(
 		ctx,
-		review1.WithID(req.ID, false),
 		review1.WithEntID(req.EntID, false),
 		review1.WithAppID(req.AppID, true),
 		review1.WithDomain(req.Domain, true),
