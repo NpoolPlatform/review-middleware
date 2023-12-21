@@ -18,6 +18,9 @@ func (h *Handler) DeleteReview(ctx context.Context) (info *npool.Review, err err
 	if info == nil {
 		return nil, nil
 	}
+	if h.ID == nil {
+		h.ID = &info.ID
+	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		now := uint32(time.Now().Unix())
