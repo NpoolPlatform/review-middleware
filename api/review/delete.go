@@ -17,11 +17,12 @@ func (s *Server) DeleteReview(ctx context.Context, in *npool.DeleteReviewRequest
 			"DeleteReview",
 			"In", in,
 		)
-		return &npool.DeleteReviewResponse{}, status.Error(codes.InvalidArgument, "info is empty")
+		return &npool.DeleteReviewResponse{}, status.Error(codes.Aborted, "info is empty")
 	}
 	handler, err := review1.NewHandler(
 		ctx,
-		review1.WithID(req.ID, true),
+		review1.WithID(req.ID, false),
+		review1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
