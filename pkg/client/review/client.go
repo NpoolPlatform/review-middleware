@@ -103,11 +103,12 @@ func GetReview(ctx context.Context, id string) (*npool.Review, error) {
 	return info.(*npool.Review), nil
 }
 
-func DeleteReview(ctx context.Context, id uint32) (*npool.Review, error) {
+func DeleteReview(ctx context.Context, in *npool.ReviewReq) (*npool.Review, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteReview(ctx, &npool.DeleteReviewRequest{
 			Info: &npool.ReviewReq{
-				ID: &id,
+				ID:    in.ID,
+				EntID: in.EntID,
 			},
 		})
 		if err != nil {
