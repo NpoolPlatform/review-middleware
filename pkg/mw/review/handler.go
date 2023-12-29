@@ -171,7 +171,7 @@ func WithObjectType(_type *reviewtypes.ReviewObjectType, must bool) func(context
 		switch *_type {
 		case reviewtypes.ReviewObjectType_ObjectKyc:
 		case reviewtypes.ReviewObjectType_ObjectWithdrawal:
-		case reviewtypes.ReviewObjectType_ObjectCouponRandomCash:
+		case reviewtypes.ReviewObjectType_ObjectRandomCouponCash:
 		default:
 			return fmt.Errorf("invalid object type")
 		}
