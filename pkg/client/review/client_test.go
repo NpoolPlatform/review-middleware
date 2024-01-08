@@ -118,7 +118,7 @@ func existReviewConds(t *testing.T) {
 }
 
 func deleteReview(t *testing.T) {
-	_, err := DeleteReview(context.Background(), ret.ID)
+	_, err := DeleteReview(context.Background(), &reviewmwpb.ReviewReq{EntID: &ret.EntID})
 	assert.Nil(t, err)
 
 	info, err := GetReview(context.Background(), ret.EntID)
