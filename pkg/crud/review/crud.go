@@ -81,6 +81,7 @@ type Conds struct {
 	Trigger    *cruder.Cond
 	ObjectType *cruder.Cond
 	State      *cruder.Cond
+	States     *cruder.Cond
 }
 
 func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) { //nolint
@@ -196,6 +197,22 @@ func SetQueryConds(q *ent.ReviewQuery, conds *Conds) (*ent.ReviewQuery, error) {
 			q.Where(entreview.State(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid state op field")
+		}
+	}
+	if conds.States != nil {
+		states, ok := conds.States.Val.([]types.ReviewState)
+		if !ok {
+			return nil, fmt.Errorf("invalid states")
+		}
+		_states := []string{}
+		for _, state := range states {
+			_states = append(_states, state.String())
+		}
+		switch conds.States.Op {
+		case cruder.IN:
+			q.Where(entreview.StateIn(_states...))
+		default:
+			return nil, fmt.Errorf("invalid states op field")
 		}
 	}
 	return q, nil
